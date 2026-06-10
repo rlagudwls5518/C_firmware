@@ -23,3 +23,19 @@ void led_all_on(void){
 void led_all_off(void){
 	PORTA=0x00;
 }
+
+void led_first_on(void){
+	PORTA=0xF0;
+}
+
+void led_second_on(void){
+	PORTA=0x0F;
+}
+
+void led_odd_on(void){
+	PORTA=0x55;
+}
+
+void led_even_on(void){
+	PORTA=0xAA;
+}
