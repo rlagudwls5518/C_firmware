@@ -9,7 +9,7 @@
 void init_led(void);
 void led_all_on(void);
 void led_all_off(void);
-
+unsigned char odd = 0xAA;
 
 void init_led(void){
 	DDRA=0xff; //PORTA를 출력모드로 설정
@@ -33,9 +33,9 @@ void led_second_on(void){
 }
 
 void led_odd_on(void){
-	PORTA=0x55;
+	PORTA=odd; // 10101010
 }
 
 void led_even_on(void){
-	PORTA=0xAA;
+	PORTA=(odd >> 1) & 0x55; // 01010101
 }
