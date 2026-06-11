@@ -352,11 +352,11 @@ int main(void)
 	int button0_state=0;   // 초기 상태를 led all off로 출발 하자 
  1d4:	d0 e0       	ldi	r29, 0x00	; 0
  1d6:	63 e0       	ldi	r22, 0x03	; 3
+	
 	while (1)
 	{
 #if 1
-		// button0_state : 0 --> led_shift_left_on
-		// button0_state : 1 --> led_shift_right_on
+		// button0_state
 		if (get_button(BUTTON0, BUTTON0PIN))
  1d8:	70 e0       	ldi	r23, 0x00	; 0
  1da:	80 e0       	ldi	r24, 0x00	; 0

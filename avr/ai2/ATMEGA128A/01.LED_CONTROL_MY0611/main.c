@@ -16,37 +16,32 @@ extern void init_button(void);
 extern int get_button(int button_num, int button_pin);
 extern void led_all_on(void);
 extern void led_all_off(void);
-extern int led_main(void);
-extern void led_shift_left_on(void);
-extern void led_shift_right_on(void);
+extern void led_main(int button_state);
 
 #if 1
 int main(void)
 {
-	int button0_state=0;   // 초기 상태를 led all off로 출발 하자 
+	int button0_state = 0;   // 초기 상태를 led all off로 출발 하자 
 	
 	init_button();
 	init_led();
 	
-	//led_main();
-	
 	while (1)
 	{
 #if 1
-		// button0_state : 0 --> led_shift_left_on
-		// button0_state : 1 --> led_shift_right_on
-		if (get_button(BUTTON0, BUTTON0PIN))
-		{
-			button0_state = !button0_state;   // 반전  0 <--> 1
+		if (get_button(BUTTON0, BUTTON0PIN)) {
+			button0_state++;   
+			if(button0_state == 5 || button0_state == 6)led_all_off();
 		}
-		if (button0_state) led_shift_left_on();
-		else led_shift_right_on();
+		if(button0_state > 7) button0_state = 0;
+		led_main(button0_state);
 #else		
 		// toggle  off <--> on
 		if (get_button(BUTTON0, BUTTON0PIN))
 		{
 			button0_state = !button0_state;   // 반전  0 <--> 1
 		}
+		
 		if (button0_state) led_main();
 		else led_all_off();
 #endif		

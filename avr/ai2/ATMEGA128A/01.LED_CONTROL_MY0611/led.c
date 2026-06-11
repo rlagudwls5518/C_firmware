@@ -7,6 +7,7 @@
 
 #include "led.h"
 void init_led(void);
+void led_main(int button_state);
 void led_all_on(void);
 void led_all_off(void);
 void led_shift_left_on(void);
@@ -22,16 +23,34 @@ void init_led(void)
 	PORTA=0x00;  // PORTA에 물려있는 led를 all off 	
 }
 
-int led_main(void){
+void led_main(int button_state){
 	
-	led_all_off();
-
-	
-	while(1){
-		led_shift_left_on();
-		led_shift_right_on();
+	switch(button_state){
+		case 0:
+			led_all_off();
+			break;
+		case 1:
+			led_all_on();
+			break;
+		case 2:
+			led_shift_left_on();
+			break;
+		case 3:
+			led_shift_right_on();
+			break;
+		case 4:
+			led_shift_left_keepon();
+			break;
+		case 5:
+			led_shift_right_keepon();
+			break;
+		case 6:
+			led_flower_on();
+			break;
+		case 7:
+			led_flower_off();
+			break;
 	}
-	
 }
 
 void led_all_on(void)
@@ -79,31 +98,76 @@ void led_shift_right_on(void){
 }
 
 void led_shift_left_keepon(void){
+#if 1
+	static int i = 0;
+	PORTA |= 1 << i;
+	_delay_ms(30); 
+
+	i++;
+	if(i >= 8){ 
+		i = 0;
+		
+	}
+#else
 	for(int i = 0; i< 8; i++){
-		PORTA |= 1 << i; 
+		PORTA |= 1 << i;
 		_delay_ms(300);
 	}
+#endif	
 }
 
 void led_shift_right_keepon(void){
+	
+#if 1
+	static int i = 7;
+	PORTA |= 1 << i;
+	_delay_ms(30); 
+
+	i--;
+	if(i < 0){
+		i = 7;
+		
+	}
+		
+#else
 	for(int i = 7; i >= 0; i--){
 		PORTA |= 1 << i;
 		_delay_ms(300);
 	}
+#endif	
 }
 
 void led_flower_on(void){
+#if 1
+	static int i = 0;
+	if(i >= 4)return;
+	PORTA |= 0x10 << i; //left
+	PORTA |= 0x08 >> i; //right
+	_delay_ms(300);
+	i++;
+	
+#else	
 	for(int i = 0; i < 4 ; i++){
 		PORTA |= 0x10 << i; //left
 		PORTA |= 0x08 >> i; //right
 		_delay_ms(300);
 	}
+#endif	
 }
 
 void led_flower_off(void){
+#if 1	
+	static int i = 0;
+	if(i >= 4)return;
+	PORTA &= ~(0x80 >> i); // left
+	PORTA &= ~(0x01 << i); // right
+	_delay_ms(300);
+	i++;
+#else	
 	for(int i = 0; i < 4 ; i++){
 		PORTA &= ~(0x80 >> i); // left
 		PORTA &= ~(0x01 << i); // right
 		_delay_ms(300);
 	}
+#endif	
 }
