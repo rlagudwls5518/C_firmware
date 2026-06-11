@@ -29,22 +29,24 @@ int main(void){
 		// toggle off <--> on
 		if(get_button(BUTTON0, BUTTON0PIN)){//노이즈 체크 
 			button0_state++;
-			switch (button0_state){
-				case 1:
-					led_odd_on();
-					break;
-				case 2:
-					led_even_on();	
-					break;
-				case 3:
-					led_all_on();
-					break;
-				default:
-					led_all_off();
-					button0_state = 0;
-					break;
-			}
 		}
+		
+		switch (button0_state){
+			case 1:
+				led_odd_on();
+				break;
+			case 2:
+				led_even_on();
+				break;
+			case 3:
+				led_all_on();
+				break;
+			default:
+				led_all_off();
+				button0_state = 0;
+				break;
+		}
+		
 		if(get_button(BUTTON2, BUTTON2PIN)){//노이즈 체크
 			led_all_off();
 			button0_state = 0;

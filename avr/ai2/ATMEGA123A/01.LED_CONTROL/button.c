@@ -33,13 +33,15 @@ int get_button(int button_num, int button_pin){
 	if(current_state && button_status[button_num] == BUTTON_RELEASE){ // 버튼이 처음 눌려진 상태
 		_delay_ms(15); //노이즈가 지나가길 기다린다
 		button_status[button_num] = BUTTON_PRESS;
+		
 		return 0; // 아직은 눌렀다 뗀상태가 아님
 	
 	}
 	else if(button_status[button_num] == BUTTON_PRESS && current_state == BUTTON_RELEASE){
 		//버튼이 이전에 눌러진 상태 였으며 지금은 떼어진 상태
-		button_status[button_num] = BUTTON_RELEASE; // 다음 버튼을 체크하기 위해 초기화
 		_delay_ms(15); //노이즈가 지나가길 기다린다
+		button_status[button_num] = BUTTON_RELEASE; // 다음 버튼을 체크하기 위해 초기화
+		
 		return 1; // 완전히 1번 눌렀다 뗀상태로 인정한다
 	}
 	
