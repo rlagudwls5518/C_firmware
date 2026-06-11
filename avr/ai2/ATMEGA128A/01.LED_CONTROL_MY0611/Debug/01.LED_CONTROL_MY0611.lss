@@ -19,15 +19,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   7 .debug_abbrev 000009f7  00000000  00000000  0000138d  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   0000062d  00000000  00000000  00001d84  2**0
+  8 .debug_line   00000603  00000000  00000000  00001d84  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  0000010c  00000000  00000000  000023b4  2**2
+  9 .debug_frame  0000010c  00000000  00000000  00002388  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    0000054e  00000000  00000000  000024c0  2**0
+ 10 .debug_str    0000054e  00000000  00000000  00002494  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00000418  00000000  00000000  00002a0e  2**0
+ 11 .debug_loc    00000418  00000000  00000000  000029e2  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000080  00000000  00000000  00002e26  2**0
+ 12 .debug_ranges 00000080  00000000  00000000  00002dfa  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -308,15 +308,15 @@ void led_shift_left_on(void){
  17e:	e2 f7       	brpl	.-8      	; 0x178 <led_shift_left_on+0xa>
  180:	8b bb       	out	0x1b, r24	; 27
  182:	2f ef       	ldi	r18, 0xFF	; 255
- 184:	86 e7       	ldi	r24, 0x76	; 118
- 186:	91 e0       	ldi	r25, 0x01	; 1
+ 184:	81 ee       	ldi	r24, 0xE1	; 225
+ 186:	94 e0       	ldi	r25, 0x04	; 4
  188:	21 50       	subi	r18, 0x01	; 1
  18a:	80 40       	sbci	r24, 0x00	; 0
  18c:	90 40       	sbci	r25, 0x00	; 0
  18e:	e1 f7       	brne	.-8      	; 0x188 <led_shift_left_on+0x1a>
  190:	00 c0       	rjmp	.+0      	; 0x192 <led_shift_left_on+0x24>
  192:	00 00       	nop
-	_delay_ms(30); //240ms소요
+	_delay_ms(100); //240ms소요
 	
 	i = (i + 1) % 8; //다음 인덱스 값을 계산
  194:	80 91 0e 01 	lds	r24, 0x010E	; 0x80010e <i.1772>
@@ -351,15 +351,15 @@ void led_shift_right_on(void){
  1c8:	e2 f7       	brpl	.-8      	; 0x1c2 <led_shift_right_on+0xa>
  1ca:	8b bb       	out	0x1b, r24	; 27
  1cc:	2f ef       	ldi	r18, 0xFF	; 255
- 1ce:	86 e7       	ldi	r24, 0x76	; 118
- 1d0:	91 e0       	ldi	r25, 0x01	; 1
+ 1ce:	81 ee       	ldi	r24, 0xE1	; 225
+ 1d0:	94 e0       	ldi	r25, 0x04	; 4
  1d2:	21 50       	subi	r18, 0x01	; 1
  1d4:	80 40       	sbci	r24, 0x00	; 0
  1d6:	90 40       	sbci	r25, 0x00	; 0
  1d8:	e1 f7       	brne	.-8      	; 0x1d2 <led_shift_right_on+0x1a>
  1da:	00 c0       	rjmp	.+0      	; 0x1dc <led_shift_right_on+0x24>
  1dc:	00 00       	nop
-	_delay_ms(30); //240ms소요
+	_delay_ms(100); //240ms소요
 	
 		i = (i + 1) % 8; //다음 인덱스 값을 계산
  1de:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <i.1776>
@@ -396,15 +396,15 @@ void led_shift_left_keepon(void){
  216:	82 2b       	or	r24, r18
  218:	8b bb       	out	0x1b, r24	; 27
  21a:	2f ef       	ldi	r18, 0xFF	; 255
- 21c:	86 e7       	ldi	r24, 0x76	; 118
- 21e:	91 e0       	ldi	r25, 0x01	; 1
+ 21c:	81 ee       	ldi	r24, 0xE1	; 225
+ 21e:	94 e0       	ldi	r25, 0x04	; 4
  220:	21 50       	subi	r18, 0x01	; 1
  222:	80 40       	sbci	r24, 0x00	; 0
  224:	90 40       	sbci	r25, 0x00	; 0
  226:	e1 f7       	brne	.-8      	; 0x220 <led_shift_left_keepon+0x1e>
  228:	00 c0       	rjmp	.+0      	; 0x22a <led_shift_left_keepon+0x28>
  22a:	00 00       	nop
-	_delay_ms(30); 
+	_delay_ms(100); 
 
 	i++;
  22c:	80 91 0a 01 	lds	r24, 0x010A	; 0x80010a <i.1780>
@@ -439,15 +439,15 @@ void led_shift_right_keepon(void){
  260:	82 2b       	or	r24, r18
  262:	8b bb       	out	0x1b, r24	; 27
  264:	2f ef       	ldi	r18, 0xFF	; 255
- 266:	86 e7       	ldi	r24, 0x76	; 118
- 268:	91 e0       	ldi	r25, 0x01	; 1
+ 266:	81 ee       	ldi	r24, 0xE1	; 225
+ 268:	94 e0       	ldi	r25, 0x04	; 4
  26a:	21 50       	subi	r18, 0x01	; 1
  26c:	80 40       	sbci	r24, 0x00	; 0
  26e:	90 40       	sbci	r25, 0x00	; 0
  270:	e1 f7       	brne	.-8      	; 0x26a <led_shift_right_keepon+0x1e>
  272:	00 c0       	rjmp	.+0      	; 0x274 <led_shift_right_keepon+0x28>
  274:	00 00       	nop
-	_delay_ms(30); 
+	_delay_ms(100); 
 
 	i--;
  276:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <__DATA_REGION_ORIGIN__>
@@ -503,15 +503,15 @@ void led_flower_on(void){
  2d4:	82 2b       	or	r24, r18
  2d6:	8b bb       	out	0x1b, r24	; 27
  2d8:	7f ef       	ldi	r23, 0xFF	; 255
- 2da:	85 ea       	ldi	r24, 0xA5	; 165
- 2dc:	9e e0       	ldi	r25, 0x0E	; 14
+ 2da:	81 ee       	ldi	r24, 0xE1	; 225
+ 2dc:	94 e0       	ldi	r25, 0x04	; 4
  2de:	71 50       	subi	r23, 0x01	; 1
  2e0:	80 40       	sbci	r24, 0x00	; 0
  2e2:	90 40       	sbci	r25, 0x00	; 0
  2e4:	e1 f7       	brne	.-8      	; 0x2de <led_flower_on+0x44>
  2e6:	00 c0       	rjmp	.+0      	; 0x2e8 <led_flower_on+0x4e>
  2e8:	00 00       	nop
-	_delay_ms(300);
+	_delay_ms(100);
 	i++;
  2ea:	80 91 08 01 	lds	r24, 0x0108	; 0x800108 <i.1788>
  2ee:	90 91 09 01 	lds	r25, 0x0109	; 0x800109 <i.1788+0x1>
@@ -560,15 +560,15 @@ void led_flower_off(void){
  33c:	82 23       	and	r24, r18
  33e:	8b bb       	out	0x1b, r24	; 27
  340:	7f ef       	ldi	r23, 0xFF	; 255
- 342:	85 ea       	ldi	r24, 0xA5	; 165
- 344:	9e e0       	ldi	r25, 0x0E	; 14
+ 342:	81 ee       	ldi	r24, 0xE1	; 225
+ 344:	94 e0       	ldi	r25, 0x04	; 4
  346:	71 50       	subi	r23, 0x01	; 1
  348:	80 40       	sbci	r24, 0x00	; 0
  34a:	90 40       	sbci	r25, 0x00	; 0
  34c:	e1 f7       	brne	.-8      	; 0x346 <led_flower_off+0x48>
  34e:	00 c0       	rjmp	.+0      	; 0x350 <led_flower_off+0x52>
  350:	00 00       	nop
-	_delay_ms(300);
+	_delay_ms(100);
 	i++;
  352:	80 91 06 01 	lds	r24, 0x0106	; 0x800106 <i.1792>
  356:	90 91 07 01 	lds	r25, 0x0107	; 0x800107 <i.1792+0x1>
@@ -591,54 +591,33 @@ void led_main(int button_state){
  36e:	ea 5b       	subi	r30, 0xBA	; 186
  370:	ff 4f       	sbci	r31, 0xFF	; 255
  372:	29 c0       	rjmp	.+82     	; 0x3c6 <__tablejump2__>
-		case 0:
-			led_all_off();
+		case 0: led_all_off(); break;
  374:	fa ce       	rjmp	.-524    	; 0x16a <led_all_off>
-			break;
  376:	08 95       	ret
-		case 1:
-			led_all_on();
+		case 1: led_all_on(); break;
  378:	f5 ce       	rjmp	.-534    	; 0x164 <led_all_on>
-			break;
-		case 2:
-			led_shift_left_on();
  37a:	08 95       	ret
-			break;
+		case 2: led_shift_left_on(); break;
  37c:	f8 ce       	rjmp	.-528    	; 0x16e <led_shift_left_on>
-		case 3:
-			led_shift_right_on();
  37e:	08 95       	ret
-			break;
-		case 4:
-			led_shift_left_keepon();
+		case 3: led_shift_right_on(); break;
  380:	1b cf       	rjmp	.-458    	; 0x1b8 <led_shift_right_on>
-			break;
  382:	08 95       	ret
-		case 5:
-			led_shift_right_keepon();
+		case 4: led_shift_left_keepon(); break;
  384:	3e cf       	rjmp	.-388    	; 0x202 <led_shift_left_keepon>
  386:	08 95       	ret
-			break;
+		case 5: led_shift_right_keepon(); break;
  388:	61 cf       	rjmp	.-318    	; 0x24c <led_shift_right_keepon>
-		case 6:
-			led_flower_on();
  38a:	08 95       	ret
  38c:	86 cf       	rjmp	.-244    	; 0x29a <led_flower_on>
-			break;
+		case 6: led_flower_on(); break;
  38e:	08 95       	ret
-		case 7:
-			led_flower_off();
  390:	b6 cf       	rjmp	.-148    	; 0x2fe <led_flower_off>
  392:	08 95       	ret
 
 00000394 <main>:
+		case 7: led_flower_off(); break;
  394:	a1 de       	rcall	.-702    	; 0xd8 <init_button>
-int main(void)
-{
-	int button0_state = 0;   // 초기 상태를 led all off로 출발 하자 
-	
-	init_button();
-	init_led();
  396:	e2 de       	rcall	.-572    	; 0x15c <init_led>
  398:	c0 e0       	ldi	r28, 0x00	; 0
 extern void led_main(int button_state);

@@ -507,12 +507,12 @@ END GROUP
  .debug_abbrev  0x0000084a      0x112 led.o
  .debug_abbrev  0x0000095c       0x9b main.o
 
-.debug_line     0x00000000      0x62d
+.debug_line     0x00000000      0x603
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x16a C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.7.374/gcc/dev/atmega128a/avr51/crtatmega128a.o
  .debug_line    0x0000016a      0x17f button.o
- .debug_line    0x000002e9      0x2c9 led.o
- .debug_line    0x000005b2       0x7b main.o
+ .debug_line    0x000002e9      0x29f led.o
+ .debug_line    0x00000588       0x7b main.o
 
 .debug_frame    0x00000000      0x10c
  *(.debug_frame)
