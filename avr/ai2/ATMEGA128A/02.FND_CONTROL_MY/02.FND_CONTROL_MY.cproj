@@ -122,6 +122,12 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="fnd_button.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="fnd_button.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="fnd_my.c">
       <SubType>compile</SubType>
     </Compile>
