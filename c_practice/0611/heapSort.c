@@ -33,6 +33,10 @@ int main(void)
        if(!strcmp(buff,"exit\n")) break;
        else array[count] = atoi(buff);
        count++;
+       if(count >= 10) {
+           printf("입력은 10개를 초과할 수 없습니다.\n");
+           break;
+       }
     }
     printf("**** input data ****\n");
 
@@ -60,7 +64,6 @@ void quicksort(int *arr, int start, int end){
     int pivot = start;
     int i = start + 1;
     int j = end;
-    int temp;
 
     while(i <= j){
         while (i <= end && arr[i] <= arr[pivot]) i++;

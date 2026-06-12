@@ -30,15 +30,6 @@ void init_led(void)
 	DDRA=0xff;  // PORTA 를 출력 모드로 설정
 	PORTA=0x00;  // PORTA에 물려있는 led를 all off 	
 }
-void led_index_reset(void){
-	left_on_i = 0;
-	right_on_i = 0;
-	left_keep_i = 0;
-	right_keep_i = 7;
-	flower_on_i = 0;
-	flower_off_i = 0;
-	led_all_off();
-}
 
 void led_main(int button_state){
 	
@@ -101,10 +92,7 @@ void led_shift_left_keepon(void){
 	PORTA |= 1 << left_keep_i;
 	_delay_ms(100); 
 
-	left_keep_i++;
-	if(left_keep_i >= 8){ 
-		left_keep_i = 0;
-	}
+	left_keep_i = (left_keep_i + 1) % 8;
 #else
 	for(int i = 0; i< 8; i++){
 		PORTA |= 1 << i;
@@ -118,11 +106,8 @@ void led_shift_right_keepon(void){
 #if 1
 	PORTA |= 1 << right_keep_i;
 	_delay_ms(100); 
-
-	right_keep_i--;
-	if(right_keep_i < 0){
-		right_keep_i = 7;
-	}
+	
+	right_keep_i = (right_keep_i - 1 + 8) % 8;
 		
 #else
 	for(int i = 7; i >= 0; i--){

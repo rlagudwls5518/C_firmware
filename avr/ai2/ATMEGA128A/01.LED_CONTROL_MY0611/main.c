@@ -18,6 +18,7 @@ extern void led_all_on(void);
 extern void led_all_off(void);
 extern void led_main(int button_state);
 extern void led_index_reset(void);
+
 #if 1
 int main(void)
 {
@@ -30,11 +31,10 @@ int main(void)
 	{
 #if 1
 		if (get_button(BUTTON0, BUTTON0PIN)) {
-			led_index_reset(void);
-			button0_state++;   
+			button0_state = (button0_state + 1) % 8;
 			if(button0_state == 5 || button0_state == 6)led_all_off();
 		}
-		if(button0_state > 7) button0_state = 0;
+		
 		led_main(button0_state);
 #else		
 		// toggle  off <--> on
