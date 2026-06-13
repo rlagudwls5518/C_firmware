@@ -25,12 +25,14 @@ uint32_t ms_1   = 0;  // 밀리초의 1의 자리 (0~9)
 uint8_t big_circle_left[]  = {~0x01, ~0x00, ~0x00, ~0x00, ~0x00, ~0x08, ~0x10, ~0x20};
 uint8_t big_circle_right[] = {~0x00, ~0x01, ~0x02, ~0x04, ~0x08, ~0x00, ~0x00, ~0x00};
 	
+int stopwatch_run = 1;
+
 void init_fnd();
 void fnd_min_sec_display();
 void fnd_sec_display();
 void fnd_stopwatch();
 int fnd_main(int time_mode);
-void reset_stopwatch();
+void reset_stopwatch(int stopwatch_reset_mode);
 void time_stop();
 void init_fnd_stopwatch();
 
@@ -53,14 +55,17 @@ int fnd_main(int time_mode){
 	ms_count++;
 	
 	if(time_mode == 2){
-		if(stopwatch_ms_count >= 6000){
+		if(stopwatch_run){
+			stopwatch_ms_count++;
+		}
+		if(stopwatch_ms_count >= 60000){
 			stopwatch_ms_count = 0;
 		}
 		//10ms 100ms 1000ms 10000ms 속도로 변화
-		sec_10 = (ms_count / 100) / 10; // 초의 10의 자리 (0~5)
-		sec_1  = (ms_count / 100) % 10; // 초의 1의 자리 (0~9)
-		ms_10  = (ms_count % 100) / 10;  // 밀리초의 10의 자리 (0~9)
-		ms_1   = (ms_count % 100) % 10;  // 밀리초의 1의 자리 (0~9)
+		sec_10 = (stopwatch_ms_count / 10000) % 6; // 초의 10의 자리 (0~5)
+		sec_1  = (stopwatch_ms_count / 1000) % 10; // 초의 1의 자리 (0~9)
+		ms_10  = (stopwatch_ms_count / 100) % 10;  // 밀리초의 10의 자리 (0~9)
+		ms_1   = (stopwatch_ms_count / 10) % 10;  // 밀리초의 1의 자리 (0~9)
 		
 	}else{
 		if(ms_count >= 1000){
@@ -224,18 +229,23 @@ void fnd_stopwatch(){
 	digit_select = (digit_select + 1) % 4; //다음 표시할 자리 수
 }
 
-void reset_stopwatch(){
-	
+void reset_stopwatch(int stopwatch_reset_mode){
+	if(stopwatch_reset_mode == 0){
+		stopwatch_ms_count = 0;	
+		stopwatch_run = 0;
+	}
+	else{
+		stopwatch_run = 1;
+	}
 }
 
 void time_stop(){
-	
+	stopwatch_run = !stopwatch_run;
 }
 
 void init_fnd_stopwatch(){
 	static int digit_select = 0;
 
-	
 	switch(digit_select){
 		case 0: //1단위
 		#if 1

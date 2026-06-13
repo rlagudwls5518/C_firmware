@@ -12,7 +12,7 @@ extern void init_button();
 extern int get_button(int button_num, int button_pin);
 extern int fnd_main(int time_mode);
 extern void init_fnd();
-extern void reset_stopwatch();
+extern void reset_stopwatch(int stopwatch_reset_mode);
 extern void time_stop();
 extern void init_fnd_stopwatch();
 
@@ -20,6 +20,7 @@ extern void init_fnd_stopwatch();
 int main(void)
 {
 	static int time_mode = 0;
+	static int stopwatch_reset_mode = 0;
 	
 	init_button();
 	init_fnd();
@@ -27,7 +28,6 @@ int main(void)
 	while (1){
 		if(get_button(BUTTON0, BUTTON0PIN)){
 			time_mode = (time_mode + 1) % 3;
-			if(time_mode == 2)  init_fnd_stopwatch();
 		}
 		
 		fnd_main(time_mode);
@@ -39,7 +39,8 @@ int main(void)
 		
 		if(get_button(BUTTON2, BUTTON2PIN)){
 			//스톱워치 리셋   한번더 누르면 시작
-			reset_stopwatch();
+			stopwatch_reset_mode = !stopwatch_reset_mode;
+			reset_stopwatch(stopwatch_reset_mode);
 		}
 	}
 }
