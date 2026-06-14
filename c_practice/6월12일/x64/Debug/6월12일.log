@@ -1,0 +1,5 @@
+﻿  1번.c
+  2번.c
+C:\Users\rlagu\Desktop\AVRfile\C_firmware\C_practice\6월12일\2번.c(16,2): warning C4013: 'strlwr'이(가) 정의되지 않았습니다. extern은 int형을 반환하는 것으로 간주합니다.
+  코드를 생성하고 있습니다...
+  6월12일.vcxproj -> C:\Users\rlagu\Desktop\AVRfile\C_firmware\C_practice\x64\Debug\6월12일.exe
