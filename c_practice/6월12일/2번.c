@@ -1,6 +1,6 @@
 ﻿#include <stdio.h>
 
-void main() {
+void main_2() {
 
 	char str[100];
 	int alphaCount[26] = { 0 };

@@ -141,6 +141,10 @@
   <ItemGroup>
     <ClCompile Include="1번.c" />
     <ClCompile Include="2번.c" />
+    <ClCompile Include="heapsort_binary_search.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="heap_sort.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

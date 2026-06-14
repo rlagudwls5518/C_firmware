@@ -21,5 +21,13 @@
     <ClCompile Include="1번.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="heapsort_binary_search.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="heap_sort.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

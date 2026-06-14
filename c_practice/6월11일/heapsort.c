@@ -1,6 +1,7 @@
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "heap_sort.h"
 /*
 ------- 아래 ------
  1. 최대 입력 data는 10개로
@@ -19,8 +20,7 @@
 
 char buff[40];
 int array[100];
-void swap(int* a, int* b);
-void quicksort(int* arr, int start, int end);
+void heap_sort(element a[], int n);
 
 int main(void)
 {
@@ -44,7 +44,8 @@ int main(void)
         printf("%d ", array[i]);
     }
 
-    quicksort(array, 0, count - 1);
+	heap_sort(array, count);
+
     printf("\n");
     printf("**** sort data ****\n");
     for (int i = 0; i < count; i++) {
@@ -53,28 +54,14 @@ int main(void)
 
 }
 
-void swap(int* a, int* b) {
-    int temp = *a;
-    *a = *b;
-    *b = temp;
-}
-
-void quicksort(int* arr, int start, int end) {
-    if (start >= end) return;
-    int pivot = start;
-    int i = start + 1;
-    int j = end;
-
-    while (i <= j) {
-        while (i <= end && arr[i] <= arr[pivot]) i++;
-        while (j > start && arr[j] >= arr[pivot]) j--;
-
-        if (i > j) break;
-        else swap(&arr[i], &arr[j]);
+void heap_sort(element a[], int n) {
+    HeapType* h;
+    h = create();
+    init(h);
+    for (int i = 0; i < n; i++) {
+        insert_max_heap(h, a[i]);
     }
-
-    swap(&arr[pivot], &arr[j]);
-
-    quicksort(arr, start, j - 1);
-    quicksort(arr, j + 1, end);
+    for (int i = n - 1; i >= 0; i--) {
+        a[i] = delete_max_heap(h);
+    }
 }

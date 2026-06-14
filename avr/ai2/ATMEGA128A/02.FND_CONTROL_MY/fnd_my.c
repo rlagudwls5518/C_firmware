@@ -62,10 +62,10 @@ int fnd_main(int time_mode){
 			stopwatch_ms_count = 0;
 		}
 		//10ms 100ms 1000ms 10000ms 속도로 변화
-		sec_10 = (stopwatch_ms_count / 10000) % 6; // 초의 10의 자리 (0~5)
-		sec_1  = (stopwatch_ms_count / 1000) % 10; // 초의 1의 자리 (0~9)
-		ms_10  = (stopwatch_ms_count / 100) % 10;  // 밀리초의 10의 자리 (0~9)
-		ms_1   = (stopwatch_ms_count / 10) % 10;  // 밀리초의 1의 자리 (0~9)
+		sec_10 = (stopwatch_ms_count / 10000) % 6; 
+		sec_1  = (stopwatch_ms_count / 1000) % 10; 
+		ms_10  = (stopwatch_ms_count / 100) % 10;  
+		ms_1   = (stopwatch_ms_count / 10) % 10;  
 		
 	}else{
 		if(ms_count >= 1000){
@@ -141,7 +141,6 @@ void fnd_sec_display(){
 	
 	static int digit_select = 0; // 자리수 선택
 
-	
 	switch(digit_select){
 		case 0: //1단위
 		#if 1
