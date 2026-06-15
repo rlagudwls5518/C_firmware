@@ -1,0 +1,3 @@
+﻿  heapsort_binary_search.c
+C:\Users\rlagu\Desktop\AVRfile\C_firmware\C_practice\6월12일\heapsort_binary_search.c(58,12): warning C4133: '함수': 'int [100]'과(와) 'element *' 사이의 형식이 호환되지 않습니다.
+  6월12일.vcxproj -> C:\Users\rlagu\Desktop\AVRfile\C_firmware\C_practice\x64\Debug\6월12일.exe

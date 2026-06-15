@@ -1,0 +1,8 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="6월11일/6월11일.vcxproj" Id="7e13b6d3-0ca3-4105-8397-c1446fcac661" />
+  <Project Path="6월12일/6월12일.vcxproj" Id="8f0df5b9-0078-4d0d-913e-4b55b21c6b92" />
+</Solution>
