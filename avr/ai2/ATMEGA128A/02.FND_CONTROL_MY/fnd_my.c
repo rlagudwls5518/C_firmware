@@ -34,7 +34,6 @@ void fnd_stopwatch();
 int fnd_main(int time_mode);
 void reset_stopwatch(int stopwatch_reset_mode);
 void time_stop();
-void init_fnd_stopwatch();
 
 
 int fnd_main(int time_mode){
@@ -240,48 +239,4 @@ void reset_stopwatch(int stopwatch_reset_mode){
 
 void time_stop(){
 	stopwatch_run = !stopwatch_run;
-}
-
-void init_fnd_stopwatch(){
-	static int digit_select = 0;
-
-	switch(digit_select){
-		case 0: //1단위
-		#if 1
-		FND_DIGHT_PORT = 0x80; //애노드
-		#else
-		FND_DIGHT_PORT = ~0x80; //캐소드
-		#endif
-		FND_DATA_PORT = fnd_font[0];
-		break;
-		
-		case 1: // 10단위
-		#if 1
-		FND_DIGHT_PORT = 0x40; //애노드
-		#else
-		FND_DIGHT_PORT = ~0x40; //캐소드
-		#endif
-		FND_DATA_PORT = fnd_font[0];
-		break;
-		
-		case 2: // 100단위
-		#if 1
-		FND_DIGHT_PORT = 0x20; //애노드
-		#else
-		FND_DIGHT_PORT = ~0x20; //캐소드
-		#endif
-		FND_DATA_PORT = big_circle_right[0];
-		break;
-		
-		case 3: // 1000단위
-		#if 1
-		FND_DIGHT_PORT = 0x10; //애노드
-		#else
-		FND_DIGHT_PORT = ~0x10; //캐소드
-		#endif
-		FND_DATA_PORT = big_circle_left[0];
-		break;
-	}
-	
-	digit_select = (digit_select + 1) % 4;
 }

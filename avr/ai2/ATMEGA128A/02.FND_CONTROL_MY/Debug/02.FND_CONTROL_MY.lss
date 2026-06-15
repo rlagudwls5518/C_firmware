@@ -13,21 +13,21 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
   4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000828  2**2
                   CONTENTS, READONLY
-  5 .debug_aranges 000000a0  00000000  00000000  00000868  2**0
+  5 .debug_aranges 00000098  00000000  00000000  00000868  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   00000df0  00000000  00000000  00000908  2**0
+  6 .debug_info   00000dc5  00000000  00000000  00000900  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 00000a29  00000000  00000000  000016f8  2**0
+  7 .debug_abbrev 00000a29  00000000  00000000  000016c5  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   000006d1  00000000  00000000  00002121  2**0
+  8 .debug_line   00000672  00000000  00000000  000020ee  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  00000120  00000000  00000000  000027f4  2**2
+  9 .debug_frame  00000110  00000000  00000000  00002760  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    000005cb  00000000  00000000  00002914  2**0
+ 10 .debug_str    000005c6  00000000  00000000  00002870  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    000002c5  00000000  00000000  00002edf  2**0
+ 11 .debug_loc    000002c5  00000000  00000000  00002e36  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000070  00000000  00000000  000031a4  2**0
+ 12 .debug_ranges 00000068  00000000  00000000  000030fb  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -147,24 +147,12 @@ Disassembly of section .text:
   c6:	9c cf       	rjmp	.-200    	; 0x0 <__vectors>
 
 000000c8 <init_button>:
-int get_button(int button_num, int button_pin);
-
-// 버튼 초기화 방향설정(입력) 
-void init_button()
-{
-	BUTTON_DDR &= ~(1 << BUTTON0PIN | 1 << BUTTON1PIN | 1 << BUTTON2PIN | 1 << BUTTON3PIN);
   c8:	81 b3       	in	r24, 0x11	; 17
   ca:	87 78       	andi	r24, 0x87	; 135
   cc:	81 bb       	out	0x11, r24	; 17
   ce:	08 95       	ret
 
 000000d0 <get_button>:
-	};
-	// static 지역변수에 static을 선언하면 함수를 빠져나와 다시 들어가도 이전값유지 
-	int current_state;
-	
-	// 1. button을 읽는다. 
-	current_state = BUTTON_PIN & (1 << button_pin);
   d0:	20 b3       	in	r18, 0x10	; 16
   d2:	42 2f       	mov	r20, r18
   d4:	50 e0       	ldi	r21, 0x00	; 0
@@ -177,8 +165,6 @@ void init_button()
   e2:	e2 f7       	brpl	.-8      	; 0xdc <get_button+0xc>
   e4:	24 23       	and	r18, r20
   e6:	35 23       	and	r19, r21
-	// 2. 버튼 상태 check 
-	if (current_state  && button_status[button_num] == BUTTON_RELEASE)  // 버튼이 처음 눌려진 상태 
   e8:	21 15       	cp	r18, r1
   ea:	31 05       	cpc	r19, r1
   ec:	a1 f0       	breq	.+40     	; 0x116 <get_button+0x46>
@@ -200,20 +186,14 @@ void init_button()
  100:	f1 f7       	brne	.-4      	; 0xfe <get_button+0x2e>
  102:	00 c0       	rjmp	.+0      	; 0x104 <get_button+0x34>
  104:	00 00       	nop
-	{
-		_delay_ms(15);  // noise가 지나가기를 기다린다. 
-		button_status[button_num] =BUTTON_PRESS;  
  106:	fc 01       	movw	r30, r24
  108:	e2 5e       	subi	r30, 0xE2	; 226
  10a:	fe 4f       	sbci	r31, 0xFE	; 254
  10c:	21 e0       	ldi	r18, 0x01	; 1
  10e:	20 83       	st	Z, r18
-		return 0;     // 아직은 완전히 눌렀다 뗀 상태가 아니다. 
  110:	80 e0       	ldi	r24, 0x00	; 0
  112:	90 e0       	ldi	r25, 0x00	; 0
  114:	08 95       	ret
-	}
-	else if (button_status[button_num] == BUTTON_PRESS && current_state == BUTTON_RELEASE)
  116:	fc 01       	movw	r30, r24
  118:	e2 5e       	subi	r30, 0xE2	; 226
  11a:	fe 4f       	sbci	r31, 0xFE	; 254
@@ -222,8 +202,6 @@ void init_button()
  120:	79 f4       	brne	.+30     	; 0x140 <get_button+0x70>
  122:	23 2b       	or	r18, r19
  124:	81 f4       	brne	.+32     	; 0x146 <get_button+0x76>
-	{  // 버튼이 이전에 눌려진 상태였으며 지금은 떼어진 상태 
-		button_status[button_num] = BUTTON_RELEASE;   // 다음 버튼을 체크 하기 위하여 초기화
  126:	fc 01       	movw	r30, r24
  128:	e2 5e       	subi	r30, 0xE2	; 226
  12a:	fe 4f       	sbci	r31, 0xFE	; 254
@@ -234,20 +212,14 @@ void init_button()
  134:	f1 f7       	brne	.-4      	; 0x132 <get_button+0x62>
  136:	00 c0       	rjmp	.+0      	; 0x138 <get_button+0x68>
  138:	00 00       	nop
-		_delay_ms(15);  // noise가 지나가기를 기다린다. 
-		return 1;   // 완전히 1번 눌렀다 뗀 상태로 인정 한다. 
  13a:	81 e0       	ldi	r24, 0x01	; 1
  13c:	90 e0       	ldi	r25, 0x00	; 0
  13e:	08 95       	ret
-	}
-	
-	return 0;   // 버튼이 open 상태 이다. 
  140:	80 e0       	ldi	r24, 0x00	; 0
  142:	90 e0       	ldi	r25, 0x00	; 0
  144:	08 95       	ret
  146:	80 e0       	ldi	r24, 0x00	; 0
  148:	90 e0       	ldi	r25, 0x00	; 0
-}
  14a:	08 95       	ret
 
 0000014c <init_fnd>:
@@ -277,8 +249,8 @@ void fnd_min_sec_display(){
 	static int digit_select = 0; // 자리수 선택
 	
 	switch(digit_select){
- 15a:	80 91 26 01 	lds	r24, 0x0126	; 0x800126 <digit_select.1761>
- 15e:	90 91 27 01 	lds	r25, 0x0127	; 0x800127 <digit_select.1761+0x1>
+ 15a:	80 91 26 01 	lds	r24, 0x0126	; 0x800126 <digit_select.1760>
+ 15e:	90 91 27 01 	lds	r25, 0x0127	; 0x800127 <digit_select.1760+0x1>
  162:	81 30       	cpi	r24, 0x01	; 1
  164:	91 05       	cpc	r25, r1
  166:	01 f1       	breq	.+64     	; 0x1a8 <fnd_min_sec_display+0x4e>
@@ -419,8 +391,8 @@ void fnd_min_sec_display(){
 	}
 	
 	digit_select = (digit_select + 1) % 4; //다음 표시할 자리 수
- 24e:	80 91 26 01 	lds	r24, 0x0126	; 0x800126 <digit_select.1761>
- 252:	90 91 27 01 	lds	r25, 0x0127	; 0x800127 <digit_select.1761+0x1>
+ 24e:	80 91 26 01 	lds	r24, 0x0126	; 0x800126 <digit_select.1760>
+ 252:	90 91 27 01 	lds	r25, 0x0127	; 0x800127 <digit_select.1760+0x1>
  256:	01 96       	adiw	r24, 0x01	; 1
  258:	83 70       	andi	r24, 0x03	; 3
  25a:	90 78       	andi	r25, 0x80	; 128
@@ -430,8 +402,8 @@ void fnd_min_sec_display(){
  262:	8c 6f       	ori	r24, 0xFC	; 252
  264:	9f 6f       	ori	r25, 0xFF	; 255
  266:	01 96       	adiw	r24, 0x01	; 1
- 268:	90 93 27 01 	sts	0x0127, r25	; 0x800127 <digit_select.1761+0x1>
- 26c:	80 93 26 01 	sts	0x0126, r24	; 0x800126 <digit_select.1761>
+ 268:	90 93 27 01 	sts	0x0127, r25	; 0x800127 <digit_select.1760+0x1>
+ 26c:	80 93 26 01 	sts	0x0126, r24	; 0x800126 <digit_select.1760>
  270:	08 95       	ret
 
 00000272 <fnd_sec_display>:
@@ -441,8 +413,8 @@ void fnd_sec_display(){
 	static int digit_select = 0; // 자리수 선택
 
 	switch(digit_select){
- 272:	80 91 24 01 	lds	r24, 0x0124	; 0x800124 <digit_select.1769>
- 276:	90 91 25 01 	lds	r25, 0x0125	; 0x800125 <digit_select.1769+0x1>
+ 272:	80 91 24 01 	lds	r24, 0x0124	; 0x800124 <digit_select.1768>
+ 276:	90 91 25 01 	lds	r25, 0x0125	; 0x800125 <digit_select.1768+0x1>
  27a:	81 30       	cpi	r24, 0x01	; 1
  27c:	91 05       	cpc	r25, r1
  27e:	01 f1       	breq	.+64     	; 0x2c0 <fnd_sec_display+0x4e>
@@ -567,8 +539,8 @@ void fnd_sec_display(){
 	}
 	
 	digit_select = (digit_select + 1) % 4;
- 346:	80 91 24 01 	lds	r24, 0x0124	; 0x800124 <digit_select.1769>
- 34a:	90 91 25 01 	lds	r25, 0x0125	; 0x800125 <digit_select.1769+0x1>
+ 346:	80 91 24 01 	lds	r24, 0x0124	; 0x800124 <digit_select.1768>
+ 34a:	90 91 25 01 	lds	r25, 0x0125	; 0x800125 <digit_select.1768+0x1>
  34e:	01 96       	adiw	r24, 0x01	; 1
  350:	83 70       	andi	r24, 0x03	; 3
  352:	90 78       	andi	r25, 0x80	; 128
@@ -578,8 +550,8 @@ void fnd_sec_display(){
  35a:	8c 6f       	ori	r24, 0xFC	; 252
  35c:	9f 6f       	ori	r25, 0xFF	; 255
  35e:	01 96       	adiw	r24, 0x01	; 1
- 360:	90 93 25 01 	sts	0x0125, r25	; 0x800125 <digit_select.1769+0x1>
- 364:	80 93 24 01 	sts	0x0124, r24	; 0x800124 <digit_select.1769>
+ 360:	90 93 25 01 	sts	0x0125, r25	; 0x800125 <digit_select.1768+0x1>
+ 364:	80 93 24 01 	sts	0x0124, r24	; 0x800124 <digit_select.1768>
  368:	08 95       	ret
 
 0000036a <fnd_stopwatch>:
@@ -589,8 +561,8 @@ void fnd_stopwatch(){
 	static int digit_select = 0; // 자리수 선택
 	
 	switch(digit_select){
- 36a:	80 91 22 01 	lds	r24, 0x0122	; 0x800122 <digit_select.1777>
- 36e:	90 91 23 01 	lds	r25, 0x0123	; 0x800123 <digit_select.1777+0x1>
+ 36a:	80 91 22 01 	lds	r24, 0x0122	; 0x800122 <digit_select.1776>
+ 36e:	90 91 23 01 	lds	r25, 0x0123	; 0x800123 <digit_select.1776+0x1>
  372:	81 30       	cpi	r24, 0x01	; 1
  374:	91 05       	cpc	r25, r1
  376:	a9 f0       	breq	.+42     	; 0x3a2 <fnd_stopwatch+0x38>
@@ -677,8 +649,8 @@ void fnd_stopwatch(){
 	}
 	
 	digit_select = (digit_select + 1) % 4; //다음 표시할 자리 수
- 3e2:	80 91 22 01 	lds	r24, 0x0122	; 0x800122 <digit_select.1777>
- 3e6:	90 91 23 01 	lds	r25, 0x0123	; 0x800123 <digit_select.1777+0x1>
+ 3e2:	80 91 22 01 	lds	r24, 0x0122	; 0x800122 <digit_select.1776>
+ 3e6:	90 91 23 01 	lds	r25, 0x0123	; 0x800123 <digit_select.1776+0x1>
  3ea:	01 96       	adiw	r24, 0x01	; 1
  3ec:	83 70       	andi	r24, 0x03	; 3
  3ee:	90 78       	andi	r25, 0x80	; 128
@@ -688,14 +660,14 @@ void fnd_stopwatch(){
  3f6:	8c 6f       	ori	r24, 0xFC	; 252
  3f8:	9f 6f       	ori	r25, 0xFF	; 255
  3fa:	01 96       	adiw	r24, 0x01	; 1
- 3fc:	90 93 23 01 	sts	0x0123, r25	; 0x800123 <digit_select.1777+0x1>
- 400:	80 93 22 01 	sts	0x0122, r24	; 0x800122 <digit_select.1777>
+ 3fc:	90 93 23 01 	sts	0x0123, r25	; 0x800123 <digit_select.1776+0x1>
+ 400:	80 93 22 01 	sts	0x0122, r24	; 0x800122 <digit_select.1776>
  404:	08 95       	ret
 
 00000406 <fnd_main>:
+int fnd_main(int time_mode);
 void reset_stopwatch(int stopwatch_reset_mode);
 void time_stop();
-void init_fnd_stopwatch();
 
 
 int fnd_main(int time_mode){
@@ -971,9 +943,19 @@ void time_stop(){
  63a:	08 95       	ret
 
 0000063c <main>:
+int main(void)
+{
+	static int time_mode = 0;
+	static int stopwatch_reset_mode = 0;
+	
+	init_button();
  63c:	45 dd       	rcall	.-1398   	; 0xc8 <init_button>
+	init_fnd();
  63e:	86 dd       	rcall	.-1268   	; 0x14c <init_fnd>
  640:	63 e0       	ldi	r22, 0x03	; 3
+	
+	while (1){
+		if(get_button(BUTTON0, BUTTON0PIN)){
  642:	70 e0       	ldi	r23, 0x00	; 0
  644:	80 e0       	ldi	r24, 0x00	; 0
  646:	90 e0       	ldi	r25, 0x00	; 0
@@ -981,6 +963,7 @@ void time_stop(){
  64a:	89 2b       	or	r24, r25
  64c:	61 f0       	breq	.+24     	; 0x666 <main+0x2a>
  64e:	80 91 47 01 	lds	r24, 0x0147	; 0x800147 <time_mode.1742>
+			time_mode = (time_mode + 1) % 3;
  652:	90 91 48 01 	lds	r25, 0x0148	; 0x800148 <time_mode.1742+0x1>
  656:	01 96       	adiw	r24, 0x01	; 1
  658:	63 e0       	ldi	r22, 0x03	; 3
@@ -989,9 +972,14 @@ void time_stop(){
  65e:	90 93 48 01 	sts	0x0148, r25	; 0x800148 <time_mode.1742+0x1>
  662:	80 93 47 01 	sts	0x0147, r24	; 0x800147 <time_mode.1742>
  666:	80 91 47 01 	lds	r24, 0x0147	; 0x800147 <time_mode.1742>
+		}
+		
+		fnd_main(time_mode);
  66a:	90 91 48 01 	lds	r25, 0x0148	; 0x800148 <time_mode.1742+0x1>
  66e:	cb de       	rcall	.-618    	; 0x406 <fnd_main>
  670:	64 e0       	ldi	r22, 0x04	; 4
+		
+		if(get_button(BUTTON1, BUTTON1PIN)){
  672:	70 e0       	ldi	r23, 0x00	; 0
  674:	81 e0       	ldi	r24, 0x01	; 1
  676:	90 e0       	ldi	r25, 0x00	; 0
@@ -999,8 +987,13 @@ void time_stop(){
  67a:	89 2b       	or	r24, r25
  67c:	09 f0       	breq	.+2      	; 0x680 <main+0x44>
  67e:	cf df       	rcall	.-98     	; 0x61e <time_stop>
+			//스톱워치 시작 일시정지
+			time_stop();
  680:	65 e0       	ldi	r22, 0x05	; 5
  682:	70 e0       	ldi	r23, 0x00	; 0
+		}
+		
+		if(get_button(BUTTON2, BUTTON2PIN)){
  684:	82 e0       	ldi	r24, 0x02	; 2
  686:	90 e0       	ldi	r25, 0x00	; 0
  688:	23 dd       	rcall	.-1466   	; 0xd0 <get_button>
@@ -1009,6 +1002,8 @@ void time_stop(){
  68e:	81 e0       	ldi	r24, 0x01	; 1
  690:	90 e0       	ldi	r25, 0x00	; 0
  692:	20 91 45 01 	lds	r18, 0x0145	; 0x800145 <stopwatch_reset_mode.1743>
+			//스톱워치 리셋   한번더 누르면 시작
+			stopwatch_reset_mode = !stopwatch_reset_mode;
  696:	30 91 46 01 	lds	r19, 0x0146	; 0x800146 <stopwatch_reset_mode.1743+0x1>
  69a:	23 2b       	or	r18, r19
  69c:	11 f0       	breq	.+4      	; 0x6a2 <main+0x66>
@@ -1020,6 +1015,7 @@ void time_stop(){
  6ac:	c9 cf       	rjmp	.-110    	; 0x640 <main+0x4>
 
 000006ae <__divmodhi4>:
+			reset_stopwatch(stopwatch_reset_mode);
  6ae:	97 fb       	bst	r25, 7
  6b0:	07 2e       	mov	r0, r23
  6b2:	16 f4       	brtc	.+4      	; 0x6b8 <__divmodhi4+0xa>

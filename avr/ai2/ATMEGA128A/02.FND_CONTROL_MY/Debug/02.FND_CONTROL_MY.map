@@ -23,10 +23,6 @@ Discarded input sections
  .text          0x00000000        0x0 fnd_my.o
  .data          0x00000000        0x0 fnd_my.o
  .bss           0x00000000        0x0 fnd_my.o
- .text.init_fnd_stopwatch
-                0x00000000       0x74 fnd_my.o
- .bss.digit_select.1790
-                0x00000000        0x2 fnd_my.o
  .text          0x00000000        0x0 main_my.o
  .data          0x00000000        0x0 main_my.o
  .bss           0x00000000        0x0 main_my.o
@@ -442,11 +438,11 @@ END GROUP
  *(.bss*)
  .bss.button_status.1738
                 0x0080011e        0x4 fnd_button.o
- .bss.digit_select.1777
+ .bss.digit_select.1776
                 0x00800122        0x2 fnd_my.o
- .bss.digit_select.1769
+ .bss.digit_select.1768
                 0x00800124        0x2 fnd_my.o
- .bss.digit_select.1761
+ .bss.digit_select.1760
                 0x00800126        0x2 fnd_my.o
  .bss.ms_1      0x00800128        0x4 fnd_my.o
                 0x00800128                ms_1
@@ -547,24 +543,24 @@ END GROUP
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000       0xa0
+.debug_aranges  0x00000000       0x98
  *(.debug_aranges)
  .debug_aranges
                 0x00000000       0x28 fnd_button.o
  .debug_aranges
-                0x00000028       0x58 fnd_my.o
+                0x00000028       0x50 fnd_my.o
  .debug_aranges
-                0x00000080       0x20 main_my.o
+                0x00000078       0x20 main_my.o
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000      0xdf0
+.debug_info     0x00000000      0xdc5
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0x780 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.7.374/gcc/dev/atmega128a/avr51/crtatmega128a.o
  .debug_info    0x00000780      0x1b2 fnd_button.o
- .debug_info    0x00000932      0x339 fnd_my.o
- .debug_info    0x00000c6b      0x185 main_my.o
+ .debug_info    0x00000932      0x30e fnd_my.o
+ .debug_info    0x00000c40      0x185 main_my.o
 
 .debug_abbrev   0x00000000      0xa29
  *(.debug_abbrev)
@@ -573,27 +569,27 @@ END GROUP
  .debug_abbrev  0x00000848      0x151 fnd_my.o
  .debug_abbrev  0x00000999       0x90 main_my.o
 
-.debug_line     0x00000000      0x6d1
+.debug_line     0x00000000      0x672
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x16a C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.7.374/gcc/dev/atmega128a/avr51/crtatmega128a.o
  .debug_line    0x0000016a      0x183 fnd_button.o
- .debug_line    0x000002ed      0x36c fnd_my.o
- .debug_line    0x00000659       0x78 main_my.o
+ .debug_line    0x000002ed      0x30d fnd_my.o
+ .debug_line    0x000005fa       0x78 main_my.o
 
-.debug_frame    0x00000000      0x120
+.debug_frame    0x00000000      0x110
  *(.debug_frame)
  .debug_frame   0x00000000       0x34 fnd_button.o
- .debug_frame   0x00000034       0xc8 fnd_my.o
- .debug_frame   0x000000fc       0x24 main_my.o
+ .debug_frame   0x00000034       0xb8 fnd_my.o
+ .debug_frame   0x000000ec       0x24 main_my.o
 
-.debug_str      0x00000000      0x5cb
+.debug_str      0x00000000      0x5c6
  *(.debug_str)
  .debug_str     0x00000000      0x27d C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.7.374/gcc/dev/atmega128a/avr51/crtatmega128a.o
  .debug_str     0x0000027d      0x1d4 fnd_button.o
                                 0x208 (size before relaxing)
- .debug_str     0x00000451      0x116 fnd_my.o
-                                0x2da (size before relaxing)
- .debug_str     0x00000567       0x64 main_my.o
+ .debug_str     0x00000451      0x166 fnd_my.o
+                                0x2e6 (size before relaxing)
+ .debug_str     0x000005b7        0xf main_my.o
                                 0x1e6 (size before relaxing)
 
 .debug_loc      0x00000000      0x2c5
@@ -619,11 +615,11 @@ END GROUP
 .debug_pubtypes
  *(.debug_pubtypes)
 
-.debug_ranges   0x00000000       0x70
+.debug_ranges   0x00000000       0x68
  *(.debug_ranges)
  .debug_ranges  0x00000000       0x18 fnd_button.o
- .debug_ranges  0x00000018       0x48 fnd_my.o
- .debug_ranges  0x00000060       0x10 main_my.o
+ .debug_ranges  0x00000018       0x40 fnd_my.o
+ .debug_ranges  0x00000058       0x10 main_my.o
 
 .debug_macro
  *(.debug_macro)

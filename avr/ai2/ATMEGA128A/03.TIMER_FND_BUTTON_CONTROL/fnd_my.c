@@ -7,15 +7,17 @@
 #include "fnd_my.h"
 
 //분 초 시계만들기
-uint32_t stopwatch_ms_count = 0;
-uint32_t ms_count = 0;
-uint32_t sec_count = 0;
-uint8_t dot_display = 0;
+
+
 uint32_t sec_10 = 0; // 초의 10의 자리 (0~5)
 uint32_t sec_1  = 0; // 초의 1의 자리 (0~9)
 uint32_t ms_10  = 0;  // 밀리초의 10의 자리 (0~9)
 uint32_t ms_1   = 0;  // 밀리초의 1의 자리 (0~9)
-extern volatile uint32_t msec_count; //volatile 최적화 방지
+
+extern volatile uint32_t ms_count; //volatile 최적화 방지
+extern volatile uint32_t stopwatch_ms_count;
+extern volatile uint32_t sec_count;
+extern volatile uint32_t stopwatch_run;
 
 #if 1					//   0     1     2    3      4    5      6     7     8     9     .
 	uint8_t fnd_font[] = {0xc0, 0xf9, 0xa4, 0xb0, 0x99, 0x92, 0x82, 0xd8, 0x80, 0x98, 0x7f}; //common 애노드
@@ -26,7 +28,7 @@ extern volatile uint32_t msec_count; //volatile 최적화 방지
 uint8_t big_circle_left[]  = {~0x01, ~0x00, ~0x00, ~0x00, ~0x00, ~0x08, ~0x10, ~0x20};
 uint8_t big_circle_right[] = {~0x00, ~0x01, ~0x02, ~0x04, ~0x08, ~0x00, ~0x00, ~0x00};
 	
-int stopwatch_run = 1;
+
 
 void init_fnd();
 void fnd_min_sec_display();
@@ -35,7 +37,7 @@ void fnd_stopwatch();
 int fnd_main(int time_mode);
 void reset_stopwatch(int stopwatch_reset_mode);
 void time_stop();
-void init_fnd_stopwatch();
+
 
 
 int fnd_main(int time_mode){
@@ -48,37 +50,14 @@ int fnd_main(int time_mode){
 			fnd_sec_display();
 			break;
 		case 2:
-			fnd_stopwatch();
-			break;
-	}
-	
-	if(msec_count >= 1){
-		ms_count++;
-		
-		if(time_mode == 2){
-			if(stopwatch_run){
-				stopwatch_ms_count++;
-			}
-			if(stopwatch_ms_count >= 60000){
-				stopwatch_ms_count = 0;
-			}
 			//10ms 100ms 1000ms 10000ms 속도로 변화
 			sec_10 = (stopwatch_ms_count / 10000) % 6;
 			sec_1  = (stopwatch_ms_count / 1000) % 10;
 			ms_10  = (stopwatch_ms_count / 100) % 10;
 			ms_1   = (stopwatch_ms_count / 10) % 10;
-			
-			}else{
-			if(ms_count >= 1000){
-				ms_count = 0;
-				sec_count++;
-				dot_display = !dot_display;
-			}
-		}
-		
+			fnd_stopwatch();
+			break;
 	}
-	
-	
 	
 	return 0;
 }
@@ -97,6 +76,7 @@ void init_fnd(){
 
 	#endif
 }
+
 void fnd_min_sec_display(){
 	
 	static int digit_select = 0; // 자리수 선택
@@ -247,46 +227,3 @@ void time_stop(){
 	stopwatch_run = !stopwatch_run;
 }
 
-void init_fnd_stopwatch(){
-	static int digit_select = 0;
-
-	switch(digit_select){
-		case 0: //1단위
-		#if 1
-		FND_DIGHT_PORT = 0x80; //애노드
-		#else
-		FND_DIGHT_PORT = ~0x80; //캐소드
-		#endif
-		FND_DATA_PORT = fnd_font[0];
-		break;
-		
-		case 1: // 10단위
-		#if 1
-		FND_DIGHT_PORT = 0x40; //애노드
-		#else
-		FND_DIGHT_PORT = ~0x40; //캐소드
-		#endif
-		FND_DATA_PORT = fnd_font[0];
-		break;
-		
-		case 2: // 100단위
-		#if 1
-		FND_DIGHT_PORT = 0x20; //애노드
-		#else
-		FND_DIGHT_PORT = ~0x20; //캐소드
-		#endif
-		FND_DATA_PORT = big_circle_right[0];
-		break;
-		
-		case 3: // 1000단위
-		#if 1
-		FND_DIGHT_PORT = 0x10; //애노드
-		#else
-		FND_DIGHT_PORT = ~0x10; //캐소드
-		#endif
-		FND_DATA_PORT = big_circle_left[0];
-		break;
-	}
-	
-	digit_select = (digit_select + 1) % 4;
-}
