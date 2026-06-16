@@ -28,8 +28,6 @@ extern volatile uint32_t stopwatch_run;
 uint8_t big_circle_left[]  = {~0x01, ~0x00, ~0x00, ~0x00, ~0x00, ~0x08, ~0x10, ~0x20};
 uint8_t big_circle_right[] = {~0x00, ~0x01, ~0x02, ~0x04, ~0x08, ~0x00, ~0x00, ~0x00};
 	
-
-
 void init_fnd();
 void fnd_min_sec_display();
 void fnd_sec_display();
@@ -37,8 +35,6 @@ void fnd_stopwatch();
 int fnd_main(int time_mode);
 void reset_stopwatch(int stopwatch_reset_mode);
 void time_stop();
-
-
 
 int fnd_main(int time_mode){
 	
@@ -50,11 +46,6 @@ int fnd_main(int time_mode){
 			fnd_sec_display();
 			break;
 		case 2:
-			//10ms 100ms 1000ms 10000ms 속도로 변화
-			sec_10 = (stopwatch_ms_count / 10000) % 6;
-			sec_1  = (stopwatch_ms_count / 1000) % 10;
-			ms_10  = (stopwatch_ms_count / 100) % 10;
-			ms_1   = (stopwatch_ms_count / 10) % 10;
 			fnd_stopwatch();
 			break;
 	}
@@ -169,6 +160,12 @@ void fnd_sec_display(){
 }
 
 void fnd_stopwatch(){
+	
+	//10ms 100ms 1000ms 10000ms 속도로 변화
+	sec_10 = (stopwatch_ms_count / 10000) % 6;
+	sec_1  = (stopwatch_ms_count / 1000) % 10;
+	ms_10  = (stopwatch_ms_count / 100) % 10;
+	ms_1   = (stopwatch_ms_count / 10) % 10;
 	
 	static int digit_select = 0; // 자리수 선택
 	

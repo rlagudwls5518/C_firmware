@@ -2,6 +2,7 @@
 #include "fnd_button.h"
 #include <avr/interrupt.h>
 
+
 static int time_mode = 0;
 static int stopwatch_reset_mode = 0;
 
@@ -19,10 +20,8 @@ volatile uint32_t sec_count = 0;
 volatile uint32_t stopwatch_run = 1;
 
 ISR(TIMER2_OVF_vect){
-	TCNT2 = 193;
-	DDRA = 0x00;
-	PORTA = 0xFF;
 	
+	TCNT2 = 193;  //1펄스당 4ms 
 	ms_count++; // 1ms count
 	
 	if(ms_count >= 1000){
@@ -66,9 +65,10 @@ int main(void)
 void init_timer2(){
 	TCNT2 = 193;
 	
-	TCCR2 = 0x00; //0분주 초기화 설정
-	TCCR2 |= (1 << CS22) | (1 << CS21) | (0 << CS20); //256분주
-	TIMSK |= (1 << TOIE2); // TIMER2 OVERflow INT
+	TCCR2 &= ~1 << CS02 | 1 << CS01 | 1<< CS00; //0분주 초기화 설정
+	TCCR2 |= 1 << CS22 | 0 << CS21 | 0 << CS20; //256분주
+	
+	TIMSK |= 1 << TOIE2; // TIMER2 OVERflow INT
 	sei(); // 전역(대문) interrupt 허용
 }
 
