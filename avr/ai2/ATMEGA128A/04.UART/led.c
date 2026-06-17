@@ -60,7 +60,7 @@ void led_all_on(void)
 void led_all_off(void)
 {
 	PORTA=0x00;
-	func_state = (func_state + 1) % FUNC_SU;
+	//func_state = (func_state + 1) % FUNC_SU;
 }
 
 void led_shift_left_on(void){
@@ -71,8 +71,9 @@ void led_shift_left_on(void){
 	if(msec_count >= 100){
 		msec_count = 0;
 		*(unsigned char *) 0x3B = 1 << i; //PORTA : 0x1B
-		if((i = (i + 1) % 8) == 0) //다음 인덱스 값을 계산
-			func_state = (func_state + 1) % FUNC_SU; // 다음 실행할 func으로 점프
+		i = (i + 1) % 8;
+		//if((i = (i + 1) % 8) == 0) //다음 인덱스 값을 계산
+			//func_state = (func_state + 1) % FUNC_SU; // 다음 실행할 func으로 점프
 	}
 	
 #endif
@@ -95,8 +96,9 @@ void led_shift_right_on(void){
 	if(msec_count >= 100){
 		msec_count = 0;
 		*(unsigned char *) 0x3B = 0x80 >> i; //PORTA : 0x1B
-		if((i = (i + 1) % 8) == 0) //다음 인덱스 값을 계산
-		func_state = (func_state + 1) % FUNC_SU; // 다음 실행할 func으로 점프
+		i = (i + 1) % 8;
+		//if((i = (i + 1) % 8) == 0) //다음 인덱스 값을 계산
+		//func_state = (func_state + 1) % FUNC_SU; // 다음 실행할 func으로 점프
 	}
 	
 		
@@ -113,8 +115,9 @@ void led_shift_left_keepon(void){
 	if(msec_count >= 100){
 		msec_count = 0;
 		PORTA |= 1 << i;
-		if((i = (i + 1) % 8) == 0) //다음 인덱스 값을 계산
-		func_state = (func_state + 1) % FUNC_SU; // 다음 실행할 func으로 점프
+		i = (i + 1) % 8;
+		//if((i = (i + 1) % 8) == 0) //다음 인덱스 값을 계산
+		//func_state = (func_state + 1) % FUNC_SU; // 다음 실행할 func으로 점프
 	}
 }
 
@@ -123,8 +126,9 @@ void led_shift_right_keepon(void){
 	if(msec_count >= 100){
 		msec_count = 0;
 		PORTA |= 1 << i;
-		if((i = (i - 1 + 8) % 8) == 0) //다음 인덱스 값을 계산
-		func_state = (func_state + 1) % FUNC_SU; // 다음 실행할 func으로 점프
+		i = (i + 1) % 8;
+		//if((i = (i - 1 + 8) % 8) == 0) //다음 인덱스 값을 계산
+		//func_state = (func_state + 1) % FUNC_SU; // 다음 실행할 func으로 점프
 	}
 }
 
@@ -134,8 +138,9 @@ void led_flower_on(void){
 		msec_count = 0;
 		PORTA |= 0x10 << i; //left
 		PORTA |= 0x08 >> i; //right
-		if((i = (i + 1) % 8) == 0) //다음 인덱스 값을 계산
-		func_state = (func_state + 1) % FUNC_SU; // 다음 실행할 func으로 점프
+		i = (i + 1) % 8;
+		//if((i = (i + 1) % 8) == 0) //다음 인덱스 값을 계산
+		//func_state = (func_state + 1) % FUNC_SU; // 다음 실행할 func으로 점프
 	}
 }
 
@@ -145,7 +150,8 @@ void led_flower_off(void){
 		msec_count = 0;
 		PORTA &= ~(0x80 >> i); // left
 		PORTA &= ~(0x01 << i); // right
-		if((i = (i + 1) % 8) == 0) //다음 인덱스 값을 계산
-		func_state = (func_state + 1) % FUNC_SU; // 다음 실행할 func으로 점프
+		i = (i + 1) % 8;
+		//if((i = (i + 1) % 8) == 0) //다음 인덱스 값을 계산
+		//func_state = (func_state + 1) % FUNC_SU; // 다음 실행할 func으로 점프
 	}
 }

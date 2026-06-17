@@ -31,10 +31,10 @@ int main(void)
 	init_uart0();
 	
 	stdout = &OUTPUT; // printf가 동작 할 수 있도록 stdout을 설정
+	sei(); // 전역(대문) interrupt 허용
 	
     while (1) {
-		printf("9443\n");
-		_delay_ms(1000);
+		pc_command_processing();
     }
 }
 
@@ -45,7 +45,6 @@ void init_timer0(){
 	TCCR0 &= ~(1 << CS02 | 1 << CS01 | 1<< CS00); //0분주 초기화 설정
 	TCCR0 |= 1 << CS02 | 0 << CS01 | 0 << CS00; //64분주
 	TIMSK |= 1 << TOIE0; // TIMER0 OVERflow INT
-	sei(); // 전역(대문) interrupt 허용
 }
 
 
