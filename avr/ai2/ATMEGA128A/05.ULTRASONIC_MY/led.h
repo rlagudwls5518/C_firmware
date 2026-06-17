@@ -1,0 +1,15 @@
+﻿/*
+ * 05.ULTRASONIC.c
+ *
+ * Created: 2026-06-17 오후 1:29:55
+ * Author : kccistc
+ */ 
+
+
+#ifndef LED_H_
+#define LED_H_
+#define F_CPU 16000000UL  // 16MHz
+#include <avr/io.h>  // PORTA PORTB PORTD... IO관련 reg가 들어 있다.
+#include <util/delay.h>  // _delay_ms _delay_us 등
+
+#endif /* LED_H_ */
