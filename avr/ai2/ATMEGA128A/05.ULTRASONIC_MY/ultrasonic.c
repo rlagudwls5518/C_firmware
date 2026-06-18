@@ -19,7 +19,11 @@ void init_ultrasonic();
 void make_trigger();
 void ultrasonit_processing();
 
-int trigger_check = 1;
+enum FLAG{
+	YES = 1,
+	NO = 0
+};
+volatile int trigger_check_detect = YES;
 
 // P278 표12.3
 // INT4 : PE4 외부 INT4 초음파 센서 상승.하강에지 발생시 이곳으로 진입
@@ -27,8 +31,8 @@ int trigger_check = 1;
 // 0x000A
 
 ISR(INT4_vect){
-	//1. 상승에지
-	if(ECHO_DDR & (1 << ECHO_PIN)){
+	//1. 상승에지 
+	if(ECHO_PORT & (1 << ECHO_PIN)){
 		TCNT1 = 0;
 		
 	}
@@ -41,11 +45,11 @@ ISR(INT4_vect){
 		//640us / 58(1cm이동하는데 소요시간) : 11cm
 		//1sec : 1000000us
 		
-		ultrasonic_distance = (TCNT1 * 1000000 * 1024 / F_CPU)/58;
+		ultrasonic_distance = (TCNT1 * 1000000.0 * 1024 / F_CPU)/58;
 		
 		// 소요시간을 cm로 환산
 		sprintf((char *)scm, "dis : %dcm\n", ultrasonic_distance);
-		trigger_check = 0;
+		trigger_check_detect = YES;
 	}
 }
 
@@ -72,26 +76,24 @@ void init_ultrasonic(){
 	 
 }
 
-void make_trigger(){
-	//시작은 뭔지모르니까 low로 떨어뜨려놓고 시작 0부터
-	TRIG_PORT &= ~(1 << TRIG_PIN);
-	_delay_ms(1);
+void make_trigger(void)
+{
+	TRIG_PORT &= ~(1 << TRIG_PIN);   // low로 만든다
+	_delay_us(1);
 	
-	TRIG_PORT |= (1 << TRIG_PIN); // HIGH로 만듬
-	_delay_ms(15); // 규격에는 10us인데 redauncy로 15us 
+	TRIG_PORT |= (1 << TRIG_PIN);   // high로 만든다	
+	_delay_us(15);       // 규격에는 10us인데 reduancy로 15us
 	
-	TRIG_PORT &= ~(1 << TRIG_PIN);
+	TRIG_PORT &= ~(1 << TRIG_PIN);   // low로 만든다
+	trigger_check_detect = NO;
 }
 
 void ultrasonit_processing(){
-	if(ultrasonic_check_time  >= 1000){ // 1초
+	if(trigger_check_detect){ 
 		ultrasonic_check_time = 0;
 		printf("%s", scm);
-		led_ultrasonic_on(ultrasonic_distance);
-		if(trigger_check == 0){
-			make_trigger();	
-			trigger_check = 1;
-		}
+		make_trigger();	
 	}
+	led_ultrasonic_on(ultrasonic_distance);
 }
 

@@ -10,5 +10,5 @@ main.c
 
 uart0.c
 
-utrasonic.c
+ultrasonic.c
 
