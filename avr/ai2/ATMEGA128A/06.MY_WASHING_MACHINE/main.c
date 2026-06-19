@@ -11,23 +11,25 @@
 #include <avr/interrupt.h> // sei 등 함수
 #include <util/delay.h>
 
-volatile uint32_t min_count = 0;
-extern volatile uint32_t left_time;
-extern int timer_run;
+volatile uint32_t ms_count = 0;
+volatile uint32_t left_time = 0; //남은시간
 
-extern void init_fnd(void);
+
+extern void init_fnd();
 extern void init_button(void);
 extern void init_led(void);
-extern void init_timer3_pwm();
 extern void init_washing_motor_driver();
+extern void init_timer3_pwm();
 extern void washing_comtrol_main();
 void init_timer0();
 
 ISR(TIMER0_OVF_vect){
 	TCNT0 = 6;
+	ms_count++;
 	
-	if(left_time > 0){
-		min_count--;
+	if(ms_count >= 250 && left_time > 0){
+		ms_count = 0;
+		left_time--;
 	}
 }
 
