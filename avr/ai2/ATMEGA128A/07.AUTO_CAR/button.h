@@ -4,8 +4,8 @@
 #include <avr/io.h>  // PORTA PORTB PORTD... IO관련 reg가 들어 있다.
 #include <util/delay.h>  // _delay_ms _delay_us 등
 
-#define  BUTTON_DDR  DDRD
-#define  BUTTON_PIN  PIND   // PORTD를 읽는 register 5v:1  0v:0=]
+#define  BUTTON_DDR  DDRG
+#define  BUTTON_PIN  PING   // PORTD를 읽는 register 5v:1  0v:0
 
 #define  BUTTON0PIN 3    // PORTD.4
 #define  BUTTON1PIN 4    // PORTD.5

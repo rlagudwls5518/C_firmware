@@ -411,8 +411,8 @@ void init_timer3_pwm(){
 
 0000021a <init_motor_driver>:
  PE5 : PWM control
- PE6 = IN1 방향설정
- PE7 : IN2
+ PF6 = IN1 방향설정
+ PF7 : IN2
 */
 void init_motor_driver(){
 	DDRF |= 1 << 6 | 1 << 7; // 출력모드 설정

@@ -1,0 +1,34 @@
+﻿/*
+* fnd.h
+*
+* Created: 2026-06-12 오전 10:46:05
+*  Author: kccistc
+*/
+
+
+#define F_CPU 16000000UL
+#include <avr/io.h>
+#include <util/delay.h>
+
+#define FIRST_FND_DATA_DDR DDRC
+#define FIRST_FND_DATA_PORT PORTC
+
+
+#define FIRST_FND_DIGHT_DDR DDRB
+#define FIRST_FND_DIGHT_PORT PORTB
+
+#define FIRST_FND_DIGHT_D1 0
+#define FIRST_FND_DIGHT_D2 1
+#define FIRST_FND_DIGHT_D3 2
+#define FIRST_FND_DIGHT_D4 3
+
+#define SECOND_FND_DATA_DDR DDRD
+#define SECOND_FND_DATA_PORT PORTD
+
+#define SECOND_FND_DIGHT_DDR DDRA
+#define SECOND_FND_DIGHT_PORT PORTA
+
+#define SECOND_FND_DIGHT_D1 3
+#define SECOND_FND_DIGHT_D2 4
+#define SECOND_FND_DIGHT_D3 5
+#define SECOND_FND_DIGHT_D4 6
