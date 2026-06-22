@@ -30,6 +30,9 @@ uint8_t fnd_text[4][4] = {
 
 
 extern volatile uint32_t msec_count;
+extern int back_count;
+extern int left_count;
+extern int right_count;
 
 
 static int row = 0;
@@ -38,6 +41,7 @@ void init_fnd();
 int fnd_main(int time_mode);
 void fnd_state_display(int state);
 void fnd_racing_time_display();
+void final_count_display();
 
 void init_fnd(){
 	FIRST_FND_DATA_DDR = 0xff; //출력모드로 설정
@@ -123,4 +127,24 @@ void fnd_racing_time_display() {
 
 
 	digit_select = (digit_select + 1) % 4;
+}
+
+void final_count_display(int count) {
+	static int digit_select = 0; // 자리수 선택 변수
+
+
+	SECOND_FND_DATA_PORT = 0x00;
+
+	switch(digit_select) {
+		case 0: // 1의 자리 (가장 오른쪽) - PA3
+		SECOND_FND_DIGHT_PORT = 0xF7;
+		SECOND_FND_DATA_PORT = fnd_font[count % 10];
+		break;
+		
+		case 1: // 10의 자리 (오른쪽에서 두 번째) - PA4
+		SECOND_FND_DIGHT_PORT = 0xEF;
+		SECOND_FND_DATA_PORT = fnd_font[(count / 10) % 10];
+		break;
+	}
+	digit_select = (digit_select + 1) % 2;
 }

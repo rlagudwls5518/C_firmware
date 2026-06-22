@@ -22,6 +22,9 @@ extern volatile int right_distance;
 extern volatile int mid_distance;
 int function_state = MANUAL_MODE;
 int warning_state = 0;
+int back_count = 0;
+int left_count = 0;
+int right_count = 0;
 
 void (*pfunc[]) () =
 {
@@ -51,6 +54,23 @@ int main(void)
 		}
 		pfunc[function_state] ();
 		fnd_racing_time_display();
+		
+		
+		if(function_state == 1 && get_button(BUTTON0,BUTTON0PIN)){
+			static int i = 0;
+			switch(i){
+				case 0:
+					final_count_display(back_count);
+				break;
+				case 1:
+					final_count_display(right_count);
+				break;
+				case 2:
+					final_count_display(left_count);
+				break;
+			}
+			i = i % 3;
+		}
 		
 	}
 }
@@ -106,15 +126,19 @@ void auto_mode(){
 		fnd_state_display(WARNING_RIGHT);
 		backward(200);
 		turn_right(800);
+		right_count++;
+		
 	}
 	else if(warning_state == WARNING_LEFT) {
 		fnd_state_display(WARNING_LEFT);
 		backward(200);
 		turn_left(700);
+		left_count++;
 	}
 	else if(warning_state == WARNING_MID){
 		fnd_state_display(WARNING_MID);
 		 backward(500);
+		 back_count++;
 	}
 	else{
 		fnd_state_display(NO_WARNING);
