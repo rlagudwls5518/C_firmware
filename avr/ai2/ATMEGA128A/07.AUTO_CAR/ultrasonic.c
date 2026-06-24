@@ -63,9 +63,15 @@ void make_trigger(uint8_t pin){
 	
 	TRIG_PORT &= ~(1 << pin);
 }
+// 초음파를 같이 체크하면 간섭때문에 망함 
+// 초음파 사라지기까지 시간 차이를 두고 체크해야함
 
-void ultrasonic_processing(){// 초음파를 같이 체크하면 간섭때문에 망함 최소 초음파 사라지기까지 20ms이므로 차이를 두고 체크해야함
-	if(ultrasonic_check_time == 0){
+void ultrasonic_processing(){
+	
+	if(ultrasonic_check_time >= 60){
+		ultrasonic_check_time = 0;
+	}
+	else if(ultrasonic_check_time == 0){
 		current_sensor = SENSER_LEFT;
 		make_trigger(TRIG_LEFT);
 	}
@@ -76,9 +82,6 @@ void ultrasonic_processing(){// 초음파를 같이 체크하면 간섭때문에
 	else if(ultrasonic_check_time == 40){
 		current_sensor = SENSER_RIGHT;
 		make_trigger(TRIG_RIGHT);
-	}
-	else if(ultrasonic_check_time >= 60){
-		ultrasonic_check_time = 0;
 	}
 }
 

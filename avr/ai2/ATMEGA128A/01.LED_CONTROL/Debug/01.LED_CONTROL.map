@@ -468,14 +468,14 @@ END GROUP
  .debug_frame   0x00000034       0xb4 led.o
  .debug_frame   0x000000e8       0x24 main.o
 
-.debug_str      0x00000000      0x53a
+.debug_str      0x00000000      0x507
  *(.debug_str)
  .debug_str     0x00000000      0x27d C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.7.374/gcc/dev/atmega128a/avr51/crtatmega128a.o
  .debug_str     0x0000027d      0x1cd button.o
                                 0x201 (size before relaxing)
- .debug_str     0x0000044a       0xd6 led.o
+ .debug_str     0x0000044a       0xa3 led.o
                                 0x244 (size before relaxing)
- .debug_str     0x00000520       0x1a main.o
+ .debug_str     0x000004ed       0x1a main.o
                                 0x1b2 (size before relaxing)
 
 .debug_loc      0x00000000      0x3c0

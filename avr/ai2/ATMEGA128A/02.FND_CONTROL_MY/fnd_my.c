@@ -91,6 +91,7 @@ void init_fnd(){
 
 	#endif
 }
+
 void fnd_min_sec_display(){
 	
 	static int digit_select = 0; // 자리수 선택

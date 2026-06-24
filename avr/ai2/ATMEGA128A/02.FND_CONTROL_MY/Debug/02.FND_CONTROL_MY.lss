@@ -147,12 +147,24 @@ Disassembly of section .text:
   c6:	9c cf       	rjmp	.-200    	; 0x0 <__vectors>
 
 000000c8 <init_button>:
+int get_button(int button_num, int button_pin);
+
+// 버튼 초기화 방향설정(입력) 
+void init_button()
+{
+	BUTTON_DDR &= ~(1 << BUTTON0PIN | 1 << BUTTON1PIN | 1 << BUTTON2PIN | 1 << BUTTON3PIN);
   c8:	81 b3       	in	r24, 0x11	; 17
   ca:	87 78       	andi	r24, 0x87	; 135
   cc:	81 bb       	out	0x11, r24	; 17
   ce:	08 95       	ret
 
 000000d0 <get_button>:
+	};
+	// static 지역변수에 static을 선언하면 함수를 빠져나와 다시 들어가도 이전값유지 
+	int current_state;
+	
+	// 1. button을 읽는다. 
+	current_state = BUTTON_PIN & (1 << button_pin);
   d0:	20 b3       	in	r18, 0x10	; 16
   d2:	42 2f       	mov	r20, r18
   d4:	50 e0       	ldi	r21, 0x00	; 0
@@ -165,6 +177,8 @@ Disassembly of section .text:
   e2:	e2 f7       	brpl	.-8      	; 0xdc <get_button+0xc>
   e4:	24 23       	and	r18, r20
   e6:	35 23       	and	r19, r21
+	// 2. 버튼 상태 check 
+	if (current_state  && button_status[button_num] == BUTTON_RELEASE)  // 버튼이 처음 눌려진 상태 
   e8:	21 15       	cp	r18, r1
   ea:	31 05       	cpc	r19, r1
   ec:	a1 f0       	breq	.+40     	; 0x116 <get_button+0x46>
@@ -186,14 +200,20 @@ Disassembly of section .text:
  100:	f1 f7       	brne	.-4      	; 0xfe <get_button+0x2e>
  102:	00 c0       	rjmp	.+0      	; 0x104 <get_button+0x34>
  104:	00 00       	nop
+	{
+		_delay_ms(15);  // noise가 지나가기를 기다린다. 
+		button_status[button_num] =BUTTON_PRESS;  
  106:	fc 01       	movw	r30, r24
  108:	e2 5e       	subi	r30, 0xE2	; 226
  10a:	fe 4f       	sbci	r31, 0xFE	; 254
  10c:	21 e0       	ldi	r18, 0x01	; 1
  10e:	20 83       	st	Z, r18
+		return 0;     // 아직은 완전히 눌렀다 뗀 상태가 아니다. 
  110:	80 e0       	ldi	r24, 0x00	; 0
  112:	90 e0       	ldi	r25, 0x00	; 0
  114:	08 95       	ret
+	}
+	else if (button_status[button_num] == BUTTON_PRESS && current_state == BUTTON_RELEASE)
  116:	fc 01       	movw	r30, r24
  118:	e2 5e       	subi	r30, 0xE2	; 226
  11a:	fe 4f       	sbci	r31, 0xFE	; 254
@@ -202,6 +222,8 @@ Disassembly of section .text:
  120:	79 f4       	brne	.+30     	; 0x140 <get_button+0x70>
  122:	23 2b       	or	r18, r19
  124:	81 f4       	brne	.+32     	; 0x146 <get_button+0x76>
+	{  // 버튼이 이전에 눌려진 상태였으며 지금은 떼어진 상태 
+		button_status[button_num] = BUTTON_RELEASE;   // 다음 버튼을 체크 하기 위하여 초기화
  126:	fc 01       	movw	r30, r24
  128:	e2 5e       	subi	r30, 0xE2	; 226
  12a:	fe 4f       	sbci	r31, 0xFE	; 254
@@ -212,43 +234,32 @@ Disassembly of section .text:
  134:	f1 f7       	brne	.-4      	; 0x132 <get_button+0x62>
  136:	00 c0       	rjmp	.+0      	; 0x138 <get_button+0x68>
  138:	00 00       	nop
+		_delay_ms(15);  // noise가 지나가기를 기다린다. 
+		return 1;   // 완전히 1번 눌렀다 뗀 상태로 인정 한다. 
  13a:	81 e0       	ldi	r24, 0x01	; 1
  13c:	90 e0       	ldi	r25, 0x00	; 0
  13e:	08 95       	ret
+	}
+	
+	return 0;   // 버튼이 open 상태 이다. 
  140:	80 e0       	ldi	r24, 0x00	; 0
  142:	90 e0       	ldi	r25, 0x00	; 0
  144:	08 95       	ret
  146:	80 e0       	ldi	r24, 0x00	; 0
  148:	90 e0       	ldi	r25, 0x00	; 0
+}
  14a:	08 95       	ret
 
 0000014c <init_fnd>:
-	return 0;
-}
-
-
-void init_fnd(){
-	FND_DATA_DDR = 0xff; //출력모드로 설정
  14c:	9f ef       	ldi	r25, 0xFF	; 255
  14e:	94 bb       	out	0x14, r25	; 20
-	FND_DIGHT_DDR |= 1 << FND_DIGHT_D1 | 1 << FND_DIGHT_D2 | 1 << FND_DIGHT_D3 | 1 << FND_DIGHT_D4;
  150:	87 b3       	in	r24, 0x17	; 23
  152:	80 6f       	ori	r24, 0xF0	; 240
  154:	87 bb       	out	0x17, r24	; 23
-	
-	//FND를 전체 off하는 작업
-	#if 1 // commom 애노우드
-	FND_DATA_PORT = 0xff;
  156:	95 bb       	out	0x15, r25	; 21
  158:	08 95       	ret
 
 0000015a <fnd_min_sec_display>:
-}
-void fnd_min_sec_display(){
-	
-	static int digit_select = 0; // 자리수 선택
-	
-	switch(digit_select){
  15a:	80 91 26 01 	lds	r24, 0x0126	; 0x800126 <digit_select.1760>
  15e:	90 91 27 01 	lds	r25, 0x0127	; 0x800127 <digit_select.1760+0x1>
  162:	81 30       	cpi	r24, 0x01	; 1
@@ -265,15 +276,8 @@ void fnd_min_sec_display(){
  178:	09 f4       	brne	.+2      	; 0x17c <fnd_min_sec_display+0x22>
  17a:	4e c0       	rjmp	.+156    	; 0x218 <fnd_min_sec_display+0xbe>
  17c:	68 c0       	rjmp	.+208    	; 0x24e <fnd_min_sec_display+0xf4>
-		case 0: //1단위
-		#if 1
-		FND_DIGHT_PORT = 0x80; //애노드
  17e:	80 e8       	ldi	r24, 0x80	; 128
  180:	88 bb       	out	0x18, r24	; 24
-		#else
-		FND_DIGHT_PORT = ~0x80; //캐소드
-		#endif
-		FND_DATA_PORT = fnd_font[sec_count % 10]; //0~9까지 출력
  182:	60 91 39 01 	lds	r22, 0x0139	; 0x800139 <sec_count>
  186:	70 91 3a 01 	lds	r23, 0x013A	; 0x80013a <sec_count+0x1>
  18a:	80 91 3b 01 	lds	r24, 0x013B	; 0x80013b <sec_count+0x2>
@@ -288,18 +292,9 @@ void fnd_min_sec_display(){
  1a0:	fe 4f       	sbci	r31, 0xFE	; 254
  1a2:	80 81       	ld	r24, Z
  1a4:	85 bb       	out	0x15, r24	; 21
-		break;
  1a6:	53 c0       	rjmp	.+166    	; 0x24e <fnd_min_sec_display+0xf4>
-		
-		case 1: // 10단위
-		#if 1
-		FND_DIGHT_PORT = 0x40; //애노드
  1a8:	80 e4       	ldi	r24, 0x40	; 64
  1aa:	88 bb       	out	0x18, r24	; 24
-		#else
-		FND_DIGHT_PORT = ~0x40; //캐소드
-		#endif
-		FND_DATA_PORT = fnd_font[sec_count/10 % 6]; //0~59까지 출력
  1ac:	60 91 39 01 	lds	r22, 0x0139	; 0x800139 <sec_count>
  1b0:	70 91 3a 01 	lds	r23, 0x013A	; 0x80013a <sec_count+0x1>
  1b4:	80 91 3b 01 	lds	r24, 0x013B	; 0x80013b <sec_count+0x2>
@@ -321,18 +316,9 @@ void fnd_min_sec_display(){
  1d8:	fe 4f       	sbci	r31, 0xFE	; 254
  1da:	80 81       	ld	r24, Z
  1dc:	85 bb       	out	0x15, r24	; 21
-		break;
  1de:	37 c0       	rjmp	.+110    	; 0x24e <fnd_min_sec_display+0xf4>
-		
-		case 2: // 100단위
-		#if 1
-		FND_DIGHT_PORT = 0x20; //애노드
  1e0:	80 e2       	ldi	r24, 0x20	; 32
  1e2:	88 bb       	out	0x18, r24	; 24
-		#else
-		FND_DIGHT_PORT = ~0x20; //캐소드
-		#endif
-		FND_DATA_PORT = fnd_font[sec_count/60 % 10]; 
  1e4:	60 91 39 01 	lds	r22, 0x0139	; 0x800139 <sec_count>
  1e8:	70 91 3a 01 	lds	r23, 0x013A	; 0x80013a <sec_count+0x1>
  1ec:	80 91 3b 01 	lds	r24, 0x013B	; 0x80013b <sec_count+0x2>
@@ -354,18 +340,9 @@ void fnd_min_sec_display(){
  210:	fe 4f       	sbci	r31, 0xFE	; 254
  212:	80 81       	ld	r24, Z
  214:	85 bb       	out	0x15, r24	; 21
-		break;
  216:	1b c0       	rjmp	.+54     	; 0x24e <fnd_min_sec_display+0xf4>
-		
-		case 3: // 1000단위
-		#if 1
-		FND_DIGHT_PORT = 0x10; //애노드
  218:	80 e1       	ldi	r24, 0x10	; 16
  21a:	88 bb       	out	0x18, r24	; 24
-		#else
-		FND_DIGHT_PORT = ~0x10; //캐소드
-		#endif
-		FND_DATA_PORT = fnd_font[sec_count/600 % 6]; 
  21c:	60 91 39 01 	lds	r22, 0x0139	; 0x800139 <sec_count>
  220:	70 91 3a 01 	lds	r23, 0x013A	; 0x80013a <sec_count+0x1>
  224:	80 91 3b 01 	lds	r24, 0x013B	; 0x80013b <sec_count+0x2>
@@ -387,10 +364,6 @@ void fnd_min_sec_display(){
  248:	fe 4f       	sbci	r31, 0xFE	; 254
  24a:	80 81       	ld	r24, Z
  24c:	85 bb       	out	0x15, r24	; 21
-		break;
-	}
-	
-	digit_select = (digit_select + 1) % 4; //다음 표시할 자리 수
  24e:	80 91 26 01 	lds	r24, 0x0126	; 0x800126 <digit_select.1760>
  252:	90 91 27 01 	lds	r25, 0x0127	; 0x800127 <digit_select.1760+0x1>
  256:	01 96       	adiw	r24, 0x01	; 1
@@ -407,12 +380,6 @@ void fnd_min_sec_display(){
  270:	08 95       	ret
 
 00000272 <fnd_sec_display>:
-
-void fnd_sec_display(){
-	
-	static int digit_select = 0; // 자리수 선택
-
-	switch(digit_select){
  272:	80 91 24 01 	lds	r24, 0x0124	; 0x800124 <digit_select.1768>
  276:	90 91 25 01 	lds	r25, 0x0125	; 0x800125 <digit_select.1768+0x1>
  27a:	81 30       	cpi	r24, 0x01	; 1
@@ -429,15 +396,8 @@ void fnd_sec_display(){
  290:	09 f4       	brne	.+2      	; 0x294 <fnd_sec_display+0x22>
  292:	46 c0       	rjmp	.+140    	; 0x320 <fnd_sec_display+0xae>
  294:	58 c0       	rjmp	.+176    	; 0x346 <fnd_sec_display+0xd4>
-		case 0: //1단위
-		#if 1
-		FND_DIGHT_PORT = 0x80; //애노드
  296:	80 e8       	ldi	r24, 0x80	; 128
  298:	88 bb       	out	0x18, r24	; 24
-		#else
-		FND_DIGHT_PORT = ~0x80; //캐소드
-		#endif
-		FND_DATA_PORT = fnd_font[sec_count % 10]; //0~9까지 출력
  29a:	60 91 39 01 	lds	r22, 0x0139	; 0x800139 <sec_count>
  29e:	70 91 3a 01 	lds	r23, 0x013A	; 0x80013a <sec_count+0x1>
  2a2:	80 91 3b 01 	lds	r24, 0x013B	; 0x80013b <sec_count+0x2>
@@ -452,18 +412,9 @@ void fnd_sec_display(){
  2b8:	fe 4f       	sbci	r31, 0xFE	; 254
  2ba:	80 81       	ld	r24, Z
  2bc:	85 bb       	out	0x15, r24	; 21
-		break;
  2be:	43 c0       	rjmp	.+134    	; 0x346 <fnd_sec_display+0xd4>
-		
-		case 1: // 10단위
-		#if 1		
-		FND_DIGHT_PORT = 0x40; //애노드
  2c0:	80 e4       	ldi	r24, 0x40	; 64
  2c2:	88 bb       	out	0x18, r24	; 24
-		#else
-		FND_DIGHT_PORT = ~0x40; //캐소드
-		#endif
-		FND_DATA_PORT = fnd_font[sec_count/10 % 6]; //0~59까지 출력
  2c4:	60 91 39 01 	lds	r22, 0x0139	; 0x800139 <sec_count>
  2c8:	70 91 3a 01 	lds	r23, 0x013A	; 0x80013a <sec_count+0x1>
  2cc:	80 91 3b 01 	lds	r24, 0x013B	; 0x80013b <sec_count+0x2>
@@ -485,18 +436,9 @@ void fnd_sec_display(){
  2f0:	fe 4f       	sbci	r31, 0xFE	; 254
  2f2:	80 81       	ld	r24, Z
  2f4:	85 bb       	out	0x15, r24	; 21
-		break;
  2f6:	27 c0       	rjmp	.+78     	; 0x346 <fnd_sec_display+0xd4>
-		
-		case 2: // 100단위
-		#if 1
-		FND_DIGHT_PORT = 0x20; //애노드
  2f8:	80 e2       	ldi	r24, 0x20	; 32
  2fa:	88 bb       	out	0x18, r24	; 24
-		#else
-		FND_DIGHT_PORT = ~0x20; //캐소드
-		#endif
-		FND_DATA_PORT = big_circle_right[sec_count % 8];
  2fc:	80 91 39 01 	lds	r24, 0x0139	; 0x800139 <sec_count>
  300:	90 91 3a 01 	lds	r25, 0x013A	; 0x80013a <sec_count+0x1>
  304:	a0 91 3b 01 	lds	r26, 0x013B	; 0x80013b <sec_count+0x2>
@@ -510,18 +452,9 @@ void fnd_sec_display(){
  318:	fe 4f       	sbci	r31, 0xFE	; 254
  31a:	80 81       	ld	r24, Z
  31c:	85 bb       	out	0x15, r24	; 21
-		break;
  31e:	13 c0       	rjmp	.+38     	; 0x346 <fnd_sec_display+0xd4>
-		
-		case 3: // 1000단위
-		#if 1
-		FND_DIGHT_PORT = 0x10; //애노드
  320:	80 e1       	ldi	r24, 0x10	; 16
  322:	88 bb       	out	0x18, r24	; 24
-		#else
-		FND_DIGHT_PORT = ~0x10; //캐소드
-		#endif
-		FND_DATA_PORT = big_circle_left[sec_count % 8];
  324:	80 91 39 01 	lds	r24, 0x0139	; 0x800139 <sec_count>
  328:	90 91 3a 01 	lds	r25, 0x013A	; 0x80013a <sec_count+0x1>
  32c:	a0 91 3b 01 	lds	r26, 0x013B	; 0x80013b <sec_count+0x2>
@@ -535,10 +468,6 @@ void fnd_sec_display(){
  340:	fe 4f       	sbci	r31, 0xFE	; 254
  342:	80 81       	ld	r24, Z
  344:	85 bb       	out	0x15, r24	; 21
-		break;
-	}
-	
-	digit_select = (digit_select + 1) % 4;
  346:	80 91 24 01 	lds	r24, 0x0124	; 0x800124 <digit_select.1768>
  34a:	90 91 25 01 	lds	r25, 0x0125	; 0x800125 <digit_select.1768+0x1>
  34e:	01 96       	adiw	r24, 0x01	; 1
@@ -555,12 +484,6 @@ void fnd_sec_display(){
  368:	08 95       	ret
 
 0000036a <fnd_stopwatch>:
-
-void fnd_stopwatch(){
-	
-	static int digit_select = 0; // 자리수 선택
-	
-	switch(digit_select){
  36a:	80 91 22 01 	lds	r24, 0x0122	; 0x800122 <digit_select.1776>
  36e:	90 91 23 01 	lds	r25, 0x0123	; 0x800123 <digit_select.1776+0x1>
  372:	81 30       	cpi	r24, 0x01	; 1
@@ -576,79 +499,41 @@ void fnd_stopwatch(){
  386:	03 97       	sbiw	r24, 0x03	; 3
  388:	11 f1       	breq	.+68     	; 0x3ce <fnd_stopwatch+0x64>
  38a:	2b c0       	rjmp	.+86     	; 0x3e2 <fnd_stopwatch+0x78>
-		case 0: //1단위
-		#if 1
-		FND_DIGHT_PORT = 0x80; //애노드
  38c:	80 e8       	ldi	r24, 0x80	; 128
  38e:	88 bb       	out	0x18, r24	; 24
-		#else
-		FND_DIGHT_PORT = ~0x80; //캐소드
-		#endif
-		FND_DATA_PORT = fnd_font[ms_1]; //0~9까지 출력
  390:	e0 91 28 01 	lds	r30, 0x0128	; 0x800128 <ms_1>
  394:	f0 91 29 01 	lds	r31, 0x0129	; 0x800129 <ms_1+0x1>
  398:	ee 5e       	subi	r30, 0xEE	; 238
  39a:	fe 4f       	sbci	r31, 0xFE	; 254
  39c:	80 81       	ld	r24, Z
  39e:	85 bb       	out	0x15, r24	; 21
-		break;
  3a0:	20 c0       	rjmp	.+64     	; 0x3e2 <fnd_stopwatch+0x78>
-		
-		case 1: // 10단위
-		#if 1
-		FND_DIGHT_PORT = 0x40; //애노드
  3a2:	80 e4       	ldi	r24, 0x40	; 64
  3a4:	88 bb       	out	0x18, r24	; 24
-		#else
-		FND_DIGHT_PORT = ~0x40; //캐소드
-		#endif
-		FND_DATA_PORT = fnd_font[ms_10]; //0~59까지 출력
  3a6:	e0 91 2c 01 	lds	r30, 0x012C	; 0x80012c <ms_10>
  3aa:	f0 91 2d 01 	lds	r31, 0x012D	; 0x80012d <ms_10+0x1>
  3ae:	ee 5e       	subi	r30, 0xEE	; 238
  3b0:	fe 4f       	sbci	r31, 0xFE	; 254
  3b2:	80 81       	ld	r24, Z
  3b4:	85 bb       	out	0x15, r24	; 21
-		break;
  3b6:	15 c0       	rjmp	.+42     	; 0x3e2 <fnd_stopwatch+0x78>
-		
-		case 2: // 100단위
-		#if 1
-		FND_DIGHT_PORT = 0x20; //애노드
  3b8:	80 e2       	ldi	r24, 0x20	; 32
  3ba:	88 bb       	out	0x18, r24	; 24
-		#else
-		FND_DIGHT_PORT = ~0x20; //캐소드
-		#endif
-		FND_DATA_PORT = fnd_font[sec_1];
  3bc:	e0 91 30 01 	lds	r30, 0x0130	; 0x800130 <sec_1>
  3c0:	f0 91 31 01 	lds	r31, 0x0131	; 0x800131 <sec_1+0x1>
  3c4:	ee 5e       	subi	r30, 0xEE	; 238
  3c6:	fe 4f       	sbci	r31, 0xFE	; 254
  3c8:	80 81       	ld	r24, Z
  3ca:	85 bb       	out	0x15, r24	; 21
-		break;
  3cc:	0a c0       	rjmp	.+20     	; 0x3e2 <fnd_stopwatch+0x78>
-		
-		case 3: // 1000단위
-		#if 1
-		FND_DIGHT_PORT = 0x10; //애노드
  3ce:	80 e1       	ldi	r24, 0x10	; 16
  3d0:	88 bb       	out	0x18, r24	; 24
-		#else
-		FND_DIGHT_PORT = ~0x10; //캐소드
-		#endif
-		FND_DATA_PORT = fnd_font[sec_10];
  3d2:	e0 91 34 01 	lds	r30, 0x0134	; 0x800134 <sec_10>
  3d6:	f0 91 35 01 	lds	r31, 0x0135	; 0x800135 <sec_10+0x1>
  3da:	ee 5e       	subi	r30, 0xEE	; 238
  3dc:	fe 4f       	sbci	r31, 0xFE	; 254
  3de:	80 81       	ld	r24, Z
  3e0:	85 bb       	out	0x15, r24	; 21
-		break;
-	}
-	
-	digit_select = (digit_select + 1) % 4; //다음 표시할 자리 수
  3e2:	80 91 22 01 	lds	r24, 0x0122	; 0x800122 <digit_select.1776>
  3e6:	90 91 23 01 	lds	r25, 0x0123	; 0x800123 <digit_select.1776+0x1>
  3ea:	01 96       	adiw	r24, 0x01	; 1
@@ -665,12 +550,6 @@ void fnd_stopwatch(){
  404:	08 95       	ret
 
 00000406 <fnd_main>:
-int fnd_main(int time_mode);
-void reset_stopwatch(int stopwatch_reset_mode);
-void time_stop();
-
-
-int fnd_main(int time_mode){
  406:	8f 92       	push	r8
  408:	9f 92       	push	r9
  40a:	af 92       	push	r10
@@ -682,8 +561,6 @@ int fnd_main(int time_mode){
  416:	cf 93       	push	r28
  418:	df 93       	push	r29
  41a:	ec 01       	movw	r28, r24
-	
-	switch(time_mode){
  41c:	81 30       	cpi	r24, 0x01	; 1
  41e:	91 05       	cpc	r25, r1
  420:	39 f0       	breq	.+14     	; 0x430 <fnd_main+0x2a>
@@ -692,17 +569,9 @@ int fnd_main(int time_mode){
  426:	31 f0       	breq	.+12     	; 0x434 <fnd_main+0x2e>
  428:	89 2b       	or	r24, r25
  42a:	29 f4       	brne	.+10     	; 0x436 <fnd_main+0x30>
-		case 0:
-			fnd_min_sec_display();
  42c:	96 de       	rcall	.-724    	; 0x15a <fnd_min_sec_display>
-			break;
-		case 1:
-			fnd_sec_display();
  42e:	03 c0       	rjmp	.+6      	; 0x436 <fnd_main+0x30>
-			break;
  430:	20 df       	rcall	.-448    	; 0x272 <fnd_sec_display>
-		case 2:
-			fnd_stopwatch();
  432:	01 c0       	rjmp	.+2      	; 0x436 <fnd_main+0x30>
  434:	9a df       	rcall	.-204    	; 0x36a <fnd_stopwatch>
  436:	8f e9       	ldi	r24, 0x9F	; 159
@@ -711,11 +580,6 @@ int fnd_main(int time_mode){
  43c:	f1 f7       	brne	.-4      	; 0x43a <fnd_main+0x34>
  43e:	00 c0       	rjmp	.+0      	; 0x440 <fnd_main+0x3a>
  440:	00 00       	nop
-			break;
-	}
-	
-	_delay_ms(1);
-	ms_count++;
  442:	80 91 3d 01 	lds	r24, 0x013D	; 0x80013d <ms_count>
  446:	90 91 3e 01 	lds	r25, 0x013E	; 0x80013e <ms_count+0x1>
  44a:	a0 91 3f 01 	lds	r26, 0x013F	; 0x80013f <ms_count+0x2>
@@ -727,17 +591,13 @@ int fnd_main(int time_mode){
  45c:	90 93 3e 01 	sts	0x013E, r25	; 0x80013e <ms_count+0x1>
  460:	a0 93 3f 01 	sts	0x013F, r26	; 0x80013f <ms_count+0x2>
  464:	b0 93 40 01 	sts	0x0140, r27	; 0x800140 <ms_count+0x3>
-	
-	if(time_mode == 2){
  468:	22 97       	sbiw	r28, 0x02	; 2
  46a:	09 f0       	breq	.+2      	; 0x46e <fnd_main+0x68>
  46c:	8e c0       	rjmp	.+284    	; 0x58a <fnd_main+0x184>
-		if(stopwatch_run){
  46e:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <__DATA_REGION_ORIGIN__>
  472:	90 91 01 01 	lds	r25, 0x0101	; 0x800101 <__DATA_REGION_ORIGIN__+0x1>
  476:	89 2b       	or	r24, r25
  478:	99 f0       	breq	.+38     	; 0x4a0 <fnd_main+0x9a>
-			stopwatch_ms_count++;
  47a:	80 91 41 01 	lds	r24, 0x0141	; 0x800141 <stopwatch_ms_count>
  47e:	90 91 42 01 	lds	r25, 0x0142	; 0x800142 <stopwatch_ms_count+0x1>
  482:	a0 91 43 01 	lds	r26, 0x0143	; 0x800143 <stopwatch_ms_count+0x2>
@@ -749,8 +609,6 @@ int fnd_main(int time_mode){
  494:	90 93 42 01 	sts	0x0142, r25	; 0x800142 <stopwatch_ms_count+0x1>
  498:	a0 93 43 01 	sts	0x0143, r26	; 0x800143 <stopwatch_ms_count+0x2>
  49c:	b0 93 44 01 	sts	0x0144, r27	; 0x800144 <stopwatch_ms_count+0x3>
-		}
-		if(stopwatch_ms_count >= 60000){
  4a0:	80 91 41 01 	lds	r24, 0x0141	; 0x800141 <stopwatch_ms_count>
  4a4:	90 91 42 01 	lds	r25, 0x0142	; 0x800142 <stopwatch_ms_count+0x1>
  4a8:	a0 91 43 01 	lds	r26, 0x0143	; 0x800143 <stopwatch_ms_count+0x2>
@@ -760,14 +618,10 @@ int fnd_main(int time_mode){
  4b4:	a1 05       	cpc	r26, r1
  4b6:	b1 05       	cpc	r27, r1
  4b8:	40 f0       	brcs	.+16     	; 0x4ca <fnd_main+0xc4>
-			stopwatch_ms_count = 0;
  4ba:	10 92 41 01 	sts	0x0141, r1	; 0x800141 <stopwatch_ms_count>
  4be:	10 92 42 01 	sts	0x0142, r1	; 0x800142 <stopwatch_ms_count+0x1>
  4c2:	10 92 43 01 	sts	0x0143, r1	; 0x800143 <stopwatch_ms_count+0x2>
  4c6:	10 92 44 01 	sts	0x0144, r1	; 0x800144 <stopwatch_ms_count+0x3>
-		}
-		//10ms 100ms 1000ms 10000ms 속도로 변화
-		sec_10 = (stopwatch_ms_count / 10000) % 6; 
  4ca:	80 90 41 01 	lds	r8, 0x0141	; 0x800141 <stopwatch_ms_count>
  4ce:	90 90 42 01 	lds	r9, 0x0142	; 0x800142 <stopwatch_ms_count+0x1>
  4d2:	a0 90 43 01 	lds	r10, 0x0143	; 0x800143 <stopwatch_ms_count+0x2>
@@ -790,7 +644,6 @@ int fnd_main(int time_mode){
  4fa:	70 93 35 01 	sts	0x0135, r23	; 0x800135 <sec_10+0x1>
  4fe:	80 93 36 01 	sts	0x0136, r24	; 0x800136 <sec_10+0x2>
  502:	90 93 37 01 	sts	0x0137, r25	; 0x800137 <sec_10+0x3>
-		sec_1  = (stopwatch_ms_count / 1000) % 10; 
  506:	c5 01       	movw	r24, r10
  508:	b4 01       	movw	r22, r8
  50a:	28 ee       	ldi	r18, 0xE8	; 232
@@ -814,7 +667,6 @@ int fnd_main(int time_mode){
  530:	70 93 31 01 	sts	0x0131, r23	; 0x800131 <sec_1+0x1>
  534:	80 93 32 01 	sts	0x0132, r24	; 0x800132 <sec_1+0x2>
  538:	90 93 33 01 	sts	0x0133, r25	; 0x800133 <sec_1+0x3>
-		ms_10  = (stopwatch_ms_count / 100) % 10;  
  53c:	c5 01       	movw	r24, r10
  53e:	b4 01       	movw	r22, r8
  540:	24 e6       	ldi	r18, 0x64	; 100
@@ -831,7 +683,6 @@ int fnd_main(int time_mode){
  558:	70 93 2d 01 	sts	0x012D, r23	; 0x80012d <ms_10+0x1>
  55c:	80 93 2e 01 	sts	0x012E, r24	; 0x80012e <ms_10+0x2>
  560:	90 93 2f 01 	sts	0x012F, r25	; 0x80012f <ms_10+0x3>
-		ms_1   = (stopwatch_ms_count / 10) % 10;  
  564:	c5 01       	movw	r24, r10
  566:	b4 01       	movw	r22, r8
  568:	a7 01       	movw	r20, r14
@@ -848,20 +699,15 @@ int fnd_main(int time_mode){
  584:	90 93 2b 01 	sts	0x012B, r25	; 0x80012b <ms_1+0x3>
  588:	27 c0       	rjmp	.+78     	; 0x5d8 <fnd_main+0x1d2>
  58a:	88 3e       	cpi	r24, 0xE8	; 232
-		
-	}else{
-		if(ms_count >= 1000){
  58c:	93 40       	sbci	r25, 0x03	; 3
  58e:	a1 05       	cpc	r26, r1
  590:	b1 05       	cpc	r27, r1
  592:	10 f1       	brcs	.+68     	; 0x5d8 <fnd_main+0x1d2>
  594:	10 92 3d 01 	sts	0x013D, r1	; 0x80013d <ms_count>
-			ms_count = 0;
  598:	10 92 3e 01 	sts	0x013E, r1	; 0x80013e <ms_count+0x1>
  59c:	10 92 3f 01 	sts	0x013F, r1	; 0x80013f <ms_count+0x2>
  5a0:	10 92 40 01 	sts	0x0140, r1	; 0x800140 <ms_count+0x3>
  5a4:	80 91 39 01 	lds	r24, 0x0139	; 0x800139 <sec_count>
-			sec_count++;
  5a8:	90 91 3a 01 	lds	r25, 0x013A	; 0x80013a <sec_count+0x1>
  5ac:	a0 91 3b 01 	lds	r26, 0x013B	; 0x80013b <sec_count+0x2>
  5b0:	b0 91 3c 01 	lds	r27, 0x013C	; 0x80013c <sec_count+0x3>
@@ -873,17 +719,11 @@ int fnd_main(int time_mode){
  5c2:	a0 93 3b 01 	sts	0x013B, r26	; 0x80013b <sec_count+0x2>
  5c6:	b0 93 3c 01 	sts	0x013C, r27	; 0x80013c <sec_count+0x3>
  5ca:	81 e0       	ldi	r24, 0x01	; 1
-			dot_display = !dot_display;
  5cc:	90 91 38 01 	lds	r25, 0x0138	; 0x800138 <dot_display>
  5d0:	91 11       	cpse	r25, r1
  5d2:	80 e0       	ldi	r24, 0x00	; 0
  5d4:	80 93 38 01 	sts	0x0138, r24	; 0x800138 <dot_display>
  5d8:	80 e0       	ldi	r24, 0x00	; 0
-		}
-	}
-	
-	return 0;
-}
  5da:	90 e0       	ldi	r25, 0x00	; 0
  5dc:	df 91       	pop	r29
  5de:	cf 91       	pop	r28
@@ -899,25 +739,14 @@ int fnd_main(int time_mode){
 
 000005f2 <reset_stopwatch>:
  5f2:	89 2b       	or	r24, r25
-	
-	digit_select = (digit_select + 1) % 4; //다음 표시할 자리 수
-}
-
-void reset_stopwatch(int stopwatch_reset_mode){
-	if(stopwatch_reset_mode == 0){
  5f4:	69 f4       	brne	.+26     	; 0x610 <reset_stopwatch+0x1e>
-		stopwatch_ms_count = 0;	
  5f6:	10 92 41 01 	sts	0x0141, r1	; 0x800141 <stopwatch_ms_count>
  5fa:	10 92 42 01 	sts	0x0142, r1	; 0x800142 <stopwatch_ms_count+0x1>
  5fe:	10 92 43 01 	sts	0x0143, r1	; 0x800143 <stopwatch_ms_count+0x2>
  602:	10 92 44 01 	sts	0x0144, r1	; 0x800144 <stopwatch_ms_count+0x3>
-		stopwatch_run = 0;
  606:	10 92 01 01 	sts	0x0101, r1	; 0x800101 <__DATA_REGION_ORIGIN__+0x1>
  60a:	10 92 00 01 	sts	0x0100, r1	; 0x800100 <__DATA_REGION_ORIGIN__>
  60e:	08 95       	ret
-	}
-	else{
-		stopwatch_run = 1;
  610:	81 e0       	ldi	r24, 0x01	; 1
  612:	90 e0       	ldi	r25, 0x00	; 0
  614:	90 93 01 01 	sts	0x0101, r25	; 0x800101 <__DATA_REGION_ORIGIN__+0x1>
@@ -925,11 +754,6 @@ void reset_stopwatch(int stopwatch_reset_mode){
  61c:	08 95       	ret
 
 0000061e <time_stop>:
-	}
-}
-
-void time_stop(){
-	stopwatch_run = !stopwatch_run;
  61e:	81 e0       	ldi	r24, 0x01	; 1
  620:	90 e0       	ldi	r25, 0x00	; 0
  622:	20 91 00 01 	lds	r18, 0x0100	; 0x800100 <__DATA_REGION_ORIGIN__>
@@ -943,19 +767,9 @@ void time_stop(){
  63a:	08 95       	ret
 
 0000063c <main>:
-int main(void)
-{
-	static int time_mode = 0;
-	static int stopwatch_reset_mode = 0;
-	
-	init_button();
  63c:	45 dd       	rcall	.-1398   	; 0xc8 <init_button>
-	init_fnd();
  63e:	86 dd       	rcall	.-1268   	; 0x14c <init_fnd>
  640:	63 e0       	ldi	r22, 0x03	; 3
-	
-	while (1){
-		if(get_button(BUTTON0, BUTTON0PIN)){
  642:	70 e0       	ldi	r23, 0x00	; 0
  644:	80 e0       	ldi	r24, 0x00	; 0
  646:	90 e0       	ldi	r25, 0x00	; 0
@@ -963,7 +777,6 @@ int main(void)
  64a:	89 2b       	or	r24, r25
  64c:	61 f0       	breq	.+24     	; 0x666 <main+0x2a>
  64e:	80 91 47 01 	lds	r24, 0x0147	; 0x800147 <time_mode.1742>
-			time_mode = (time_mode + 1) % 3;
  652:	90 91 48 01 	lds	r25, 0x0148	; 0x800148 <time_mode.1742+0x1>
  656:	01 96       	adiw	r24, 0x01	; 1
  658:	63 e0       	ldi	r22, 0x03	; 3
@@ -972,14 +785,9 @@ int main(void)
  65e:	90 93 48 01 	sts	0x0148, r25	; 0x800148 <time_mode.1742+0x1>
  662:	80 93 47 01 	sts	0x0147, r24	; 0x800147 <time_mode.1742>
  666:	80 91 47 01 	lds	r24, 0x0147	; 0x800147 <time_mode.1742>
-		}
-		
-		fnd_main(time_mode);
  66a:	90 91 48 01 	lds	r25, 0x0148	; 0x800148 <time_mode.1742+0x1>
  66e:	cb de       	rcall	.-618    	; 0x406 <fnd_main>
  670:	64 e0       	ldi	r22, 0x04	; 4
-		
-		if(get_button(BUTTON1, BUTTON1PIN)){
  672:	70 e0       	ldi	r23, 0x00	; 0
  674:	81 e0       	ldi	r24, 0x01	; 1
  676:	90 e0       	ldi	r25, 0x00	; 0
@@ -987,13 +795,8 @@ int main(void)
  67a:	89 2b       	or	r24, r25
  67c:	09 f0       	breq	.+2      	; 0x680 <main+0x44>
  67e:	cf df       	rcall	.-98     	; 0x61e <time_stop>
-			//스톱워치 시작 일시정지
-			time_stop();
  680:	65 e0       	ldi	r22, 0x05	; 5
  682:	70 e0       	ldi	r23, 0x00	; 0
-		}
-		
-		if(get_button(BUTTON2, BUTTON2PIN)){
  684:	82 e0       	ldi	r24, 0x02	; 2
  686:	90 e0       	ldi	r25, 0x00	; 0
  688:	23 dd       	rcall	.-1466   	; 0xd0 <get_button>
@@ -1002,8 +805,6 @@ int main(void)
  68e:	81 e0       	ldi	r24, 0x01	; 1
  690:	90 e0       	ldi	r25, 0x00	; 0
  692:	20 91 45 01 	lds	r18, 0x0145	; 0x800145 <stopwatch_reset_mode.1743>
-			//스톱워치 리셋   한번더 누르면 시작
-			stopwatch_reset_mode = !stopwatch_reset_mode;
  696:	30 91 46 01 	lds	r19, 0x0146	; 0x800146 <stopwatch_reset_mode.1743+0x1>
  69a:	23 2b       	or	r18, r19
  69c:	11 f0       	breq	.+4      	; 0x6a2 <main+0x66>
@@ -1015,7 +816,6 @@ int main(void)
  6ac:	c9 cf       	rjmp	.-110    	; 0x640 <main+0x4>
 
 000006ae <__divmodhi4>:
-			reset_stopwatch(stopwatch_reset_mode);
  6ae:	97 fb       	bst	r25, 7
  6b0:	07 2e       	mov	r0, r23
  6b2:	16 f4       	brtc	.+4      	; 0x6b8 <__divmodhi4+0xa>

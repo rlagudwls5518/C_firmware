@@ -9,7 +9,7 @@
 #include <string.h>
 
 #define TRIG_DDR	DDRA
-#define TRIG_PORT	PORTA		
+#define TRIG_PORT	PORTA
 #define TRIG_LEFT	0
 #define TRIG_MID	1
 #define TRIG_RIGHT	2
