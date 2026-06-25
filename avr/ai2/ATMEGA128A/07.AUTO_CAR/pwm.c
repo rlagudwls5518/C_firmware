@@ -75,8 +75,6 @@ void init_timer1_pwm(){
 	TCCR1A |= 1 << COM1B1;  
 	
 	ICR1 = 0x3ff; // 1023 * 4us = 4ms TOP값
-	
-	
 
 }
 
