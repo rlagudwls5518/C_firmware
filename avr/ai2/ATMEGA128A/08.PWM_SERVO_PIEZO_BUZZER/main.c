@@ -14,6 +14,7 @@
 extern int get_button(int button_num, int button_pin);
 extern void Music_Player(const int *tone, const int *Beats);
 extern void init_speaker(void);
+extern void init_button();
 extern void Beep(int  repeat);
 extern void Siren(int repeat);
 extern void RRR(void);
@@ -38,6 +39,7 @@ int washing_melody_start = 0;
 int main(void)
 {
 	init_speaker();	
+	init_button();
 
 	while(1)
 	{
@@ -58,10 +60,6 @@ int main(void)
 			if(washing_melody_start) drum_waching_stop_melody(); 
 			else OCR3A = 0;
 		}
-
-		
-		//Music_Player(LG_WASHING_MASHINE_END_Tune, LG_WASHING_MASHINE_END_Beat);		
-		//Music_Player(Love_Attack_Tune, Love_Attack_Beats);
 /*
 		OCR3A=1702;   // 삐~뽀 레 
 		_delay_ms(1000);
