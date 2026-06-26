@@ -515,7 +515,7 @@ void power_on_melody(){
 	OCR3A = 332;
 	delay_ms(70);
 	OCR3A = 249;
-	delay_ms(3000);
+
 	
 }
 
@@ -527,10 +527,10 @@ void open_buzzer(){
 	OCR3A = 2550;
 	delay_ms(70);
 	OCR3A = 1804;
-	delay_ms(3000);
+
 }
 
 void drum_waching_stop_melody(){
 	Music_Player(LG_WASHING_MASHINE_END_Tune, LG_WASHING_MASHINE_END_Beat);	
-	delay_ms(1000);
+
 }
