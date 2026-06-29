@@ -27,10 +27,10 @@ uint8_t keypad_scan(){
 
 uint8_t get_button(int row, int col){
 	uint8_t keypad_char[4][4] = {
-		{'+', '=', '0', ' '}, 
-		{'*', '6', '5', '4'},
-		{'-', '9', '8', '7'},
-		{'/', '3', '2', '1'},
+		{' ', '0', '=', '+'}, 
+		{'4', '5', '6', '*'},
+		{'7', '8', '9', '-'},
+		{'1', '2', '3', '/'},
 	 };
 	 
 	 //버튼 눌렀을때 low로 동작하도록
@@ -43,7 +43,8 @@ uint8_t get_button(int row, int col){
 	 
 	 uint8_t current_state = 1; 
 	 KEYPAD_PORT = 0xff;
-	 KEYPAD_PORT &= ~(1 << col); // 해당 xol에 전류를 흘린다.
+	 KEYPAD_PORT &= ~(1 << 3 - col); // 해당 col에 전류를 흘린다.
+	 //col 4가 PA4에 연결되어있기때문에 
 	 
 	 
 	 for(int delay = 0; delay < 20; delay++); // keypad check를 위한 delay

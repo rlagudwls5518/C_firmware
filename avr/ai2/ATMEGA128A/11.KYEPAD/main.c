@@ -49,13 +49,8 @@ int main(void)
 		if(!queue_empty()){
 			key_value = read_queue();
 			printf("key_value : %d\n", key_value);
-			
 		}
-		
 	}
-	
-
-
 }
 
 void init_timer0(){
