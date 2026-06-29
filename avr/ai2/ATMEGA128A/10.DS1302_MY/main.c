@@ -1,7 +1,7 @@
 /*
- * 09.DHT11.c
+ * 10.DS1302_MY.c
  *
- * Created: 2026-06-26 오전 9:25:25
+ * Created: 2026-06-29 오전 9:51:54
  * Author : kccistc
  */ 
 
@@ -26,15 +26,9 @@ int main(void)
 	
 	stdout = &OUTPUT; // printf가 동작 할 수 있도록 stdout을 설정
 	
-    while (1) {
-		 ds1302_main();
-		 _delay_ms(1000);//안정화 시간
-    }
+	while (1) {
+		ds1302_main();
+		_delay_ms(1000);//안정화 시간
+	}
 }
-
-
-
-
-
-
 

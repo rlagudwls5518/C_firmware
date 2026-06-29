@@ -7,6 +7,8 @@
 
 #include "ds1302.h"
 
+extern void pc_command_processing();
+
 void ds1302_main();
 void init_ds1302();
 void init_date_time();
@@ -22,65 +24,66 @@ uint8_t bcd_to_dec(uint8_t data);
 void init_ds1302();
 void read_time_ds1302();
 void read_date_ds1302();
+void set_rtc(t_ds1302* ds1302, char* buff);
 char* date_kor[7] = {"토", "일", "월", "화", "수", "목", "금"};
+char* buff[18];
+char* result_parsing[6];
 	
 void ds1302_main(){
 	
+	t_ds1302 ds1302;
+	
 	init_ddr_ds1302();
-	init_date_time();
+	init_date_time(&ds1302);
 	init_gpio_ds1302(); // all low로 설정
-	init_ds1302();
+	init_ds1302(&ds1302);
 	
 	while(1){
+		
 		//1. read time
-		read_time_ds1302();
+		read_time_ds1302(&ds1302);
 		//2. read date
-		read_date_ds1302();
+		read_date_ds1302(&ds1302);
 		//3. printf date, time
-		printf("%d년%d월%d일 %s요일 %d시%d분%d초\n",ds1302.year, ds1302.month, ds1302.date, date_kor[ds1302.day_of_week], ds1302.hours, ds1302.minutes, ds1302.seconds);
+		printf("%d년%d월%d일 %d시%d분%d초\n",ds1302.year, ds1302.month, ds1302.date, ds1302.hours, ds1302.minutes, ds1302.seconds);
 		//4. delay_ms(1000);
 		_delay_ms(1000);
-		
 	}	
 }
-uint8_t read_ds1302(uint8_t addr){
-	
-	uint8_t data8bits = 0; // 1비트씩 읽어서 담을 변수
-	
-	//1. CE high로 변경
-	DS1302_RST_PORT |=  1 << DS1302_RST;
-	//2. addr 전송
-	tx_ds1302(addr + 1); // read addr
-	//3. data를 읽어들임( bct to dec 다시변환)
-	rx_ds1302(&data8bits);
-	//4. CE low
-	DS1302_RST_PORT &=  ~(1 << DS1302_RST);
-	//5. return
-	return  bcd_to_dec(data8bits);
+void set_rtc(t_ds1302* ds1302, char* buff){
+	//setrtc260629095600
+	pc_command_processing();
+	ds1302->year = atoi(result_parsing[0]); 
+	ds1302->month =  atoi(result_parsing[1]);
+	ds1302->date =  atoi(result_parsing[2]);
+	ds1302->day_of_week = 0;
+	ds1302->hours =  atoi(result_parsing[3]);
+	ds1302->minutes =  atoi(result_parsing[4]);
+	ds1302->seconds =  atoi(result_parsing[5]);
 }
 
 
-void read_time_ds1302(){
-	ds1302.hours = read_ds1302(ADDR_HOUR);
-	ds1302.minutes = read_ds1302(ADDR_MINUTES);
-	ds1302.seconds =  read_ds1302(ADDR_SECONDS);
+void read_time_ds1302(t_ds1302* ds1302){
+	ds1302->hours = read_ds1302(ADDR_HOUR);
+	ds1302->minutes = read_ds1302(ADDR_MINUTES);
+	ds1302->seconds =  read_ds1302(ADDR_SECONDS);
 }
 
-void read_date_ds1302(){
-	ds1302.year = read_ds1302(ADDR_YEAR);
-	ds1302.month = read_ds1302(ADDR_MONTH);
-	ds1302.day_of_week = read_ds1302(ADDR_DAY_OF_WEEK);
-	ds1302.date = read_ds1302(ADDR_DATE);
+void read_date_ds1302(t_ds1302* ds1302){
+	ds1302->year = read_ds1302(ADDR_YEAR);
+	ds1302->month = read_ds1302(ADDR_MONTH);
+	ds1302->day_of_week = read_ds1302(ADDR_DAY_OF_WEEK);
+	ds1302->date = read_ds1302(ADDR_DATE);
 }
 
-void init_ds1302(){
-	write_ds1302(ADDR_SECONDS, ds1302.seconds);
-	write_ds1302(ADDR_MINUTES, ds1302.minutes);
-	write_ds1302(ADDR_HOUR, ds1302.hours);
-	write_ds1302(ADDR_DATE, ds1302.date);
-	write_ds1302(ADDR_MONTH, ds1302.month);
-	write_ds1302(ADDR_DAY_OF_WEEK, ds1302.day_of_week);
-	write_ds1302(ADDR_YEAR, ds1302.year);
+void init_ds1302(t_ds1302* ds1302){
+	write_ds1302(ADDR_SECONDS, ds1302->seconds);
+	write_ds1302(ADDR_MINUTES, ds1302->minutes);
+	write_ds1302(ADDR_HOUR, ds1302->hours);
+	write_ds1302(ADDR_DATE, ds1302->date);
+	write_ds1302(ADDR_MONTH, ds1302->month);
+	write_ds1302(ADDR_DAY_OF_WEEK, ds1302->day_of_week);
+	write_ds1302(ADDR_YEAR, ds1302->year);
 }
 
 //dec --> bcd변환
@@ -148,6 +151,22 @@ void clook_de1302(){
 	DS1302_CLK_PORT &= ~(1 << DS1302_CLK);
 }
 
+uint8_t read_ds1302(uint8_t addr){
+	
+	uint8_t data8bits = 0; // 1비트씩 읽어서 담을 변수
+	
+	//1. CE high로 변경
+	DS1302_RST_PORT |=  1 << DS1302_RST;
+	//2. addr 전송
+	tx_ds1302(addr + 1); // read addr
+	//3. data를 읽어들임( bct to dec 다시변환)
+	rx_ds1302(&data8bits);
+	//4. CE low
+	DS1302_RST_PORT &=  ~(1 << DS1302_RST);
+	//5. return
+	return  bcd_to_dec(data8bits);
+}
+
 void write_ds1302(uint8_t addr, uint8_t data){
 	
 	// 1. CE low --> HIGH
@@ -170,12 +189,12 @@ void init_gpio_ds1302(){
 	_delay_ms(2);
 }
 
-void init_date_time(){
-	ds1302.year = 26;
-	ds1302.month = 6;
-	ds1302.date = 26;
-	ds1302.day_of_week = 6; // Friday
-	ds1302.hours = 9;
-	ds1302.minutes = 50;
-	ds1302.seconds = 00;
+void init_date_time(t_ds1302* ds1302){
+	ds1302->year = 26;
+	ds1302->month = 6;
+	ds1302->date = 26;
+	ds1302->day_of_week = 6; // Friday
+	ds1302->hours = 9;
+	ds1302->minutes = 50;
+	ds1302->seconds = 00;
 }
