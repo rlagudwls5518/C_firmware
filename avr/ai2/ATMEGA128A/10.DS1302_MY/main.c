@@ -25,10 +25,12 @@ int main(void)
 	init_uart0();
 	
 	stdout = &OUTPUT; // printf가 동작 할 수 있도록 stdout을 설정
-	
+	sei();
 	while (1) {
 		ds1302_main();
 		_delay_ms(1000);//안정화 시간
 	}
+
+	
 }
 

@@ -5,12 +5,10 @@
 *  Author: kccistc
 */
 #include "uart0.h"
-#include "ds1302.h"
 
 void init_uart0();
 void UART0_transmit(uint8_t data);
-void pc_command_processing(t_ds1302* ds1302);
-extern void set_rtc_from_uart(char* str, t_ds1302* ds1302);
+void pc_command_processing();
 
 //pc로부터 1바이트가 들어오면 자동적으로 이곳으로 진입
 //예) led_all_on/n 아면 11번 이곳으로 들어옴
@@ -19,15 +17,15 @@ ISR(USART0_RX_vect){
 	volatile uint8_t data;
 	volatile static int i = 0;
 	data = UDR0; // UDR0의 내용이 data에 복사된 후 UDR0의 내용이 빈 상태로 된다
-	if((rear + 1) % QUEUE_SIZE == front % QUEUE_SIZE) return; // 큐 다찬 상태 확인
+	if((uart_rear + 1) % QUEUE_SIZE == uart_front % QUEUE_SIZE) return; // 큐 다찬 상태 확인
 	
 	if(data == '\n' || data == '\r'){
-		rx_buff[rear][i] = '\0'; // 문장의 끝은 NULL을 넣는다
+		rx_buff[uart_rear][i] = '\0'; // 문장의 끝은 NULL을 넣는다
 		i = 0; // 다음 string을 저장하기 위해서
-		rear = (rear + 1) % QUEUE_SIZE; //  0 ~ 9
+		uart_rear = (uart_rear + 1) % QUEUE_SIZE; //  0 ~ 9
 		
 	}else{
-		rx_buff[rear][i++] = data;
+		rx_buff[uart_rear][i++] = data;
 	}
 }
 /*
@@ -51,16 +49,10 @@ void UART0_transmit(uint8_t data){
 	UDR0 = data; //HW 전송 레지스터에 데이터를 송신한다
 }
 
-void pc_command_processing(t_ds1302* ds1302){
-	
-	if(front != rear){ // data가 rx_buff에 존재하는지 체크
-		
-		if(strncmp((char *)rx_buff[front], "setrtc", strlen("setrtc")) == 0){
-			printf("명령어 매칭 성공! 파싱 시작...\n");
-			set_rtc_from_uart((char *)rx_buff[front], ds1302);
-		}
-		front = (front + 1) % QUEUE_SIZE;
+void pc_command_processing(){
+	if(uart_front != uart_rear){ // data가 rx_buff에 존재하는지 체크
+		printf("%s", rx_buff[uart_front]); // printf("%s", &rx_buff[front][0]) 같은 의미
+											
 	}
-	
 
 }

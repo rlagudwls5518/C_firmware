@@ -7,11 +7,10 @@
 
 #include "ds1302.h"
 
-extern void pc_command_processing();
+extern void pc_command_processing(t_ds1302* ds1302);
 
 void ds1302_main();
-void init_ds1302();
-void init_date_time();
+void init_date_time(t_ds1302* ds1302);
 void init_gpio_ds1302();
 void init_ddr_ds1302();
 void clook_de1302();
@@ -21,13 +20,11 @@ void write_ds1302(uint8_t addr, uint8_t data);
 uint8_t read_ds1302(uint8_t addr);
 uint8_t dec_to_bcd(uint8_t data);
 uint8_t bcd_to_dec(uint8_t data);
-void init_ds1302();
-void read_time_ds1302();
-void read_date_ds1302();
-void set_rtc(t_ds1302* ds1302, char* buff);
+void init_ds1302(t_ds1302* ds1302);
+void read_time_ds1302(t_ds1302* ds1302);
+void read_date_ds1302(t_ds1302* ds1302);
 char* date_kor[7] = {"토", "일", "월", "화", "수", "목", "금"};
-char* buff[18];
-char* result_parsing[6];
+
 	
 void ds1302_main(){
 	
@@ -40,6 +37,8 @@ void ds1302_main(){
 	
 	while(1){
 		
+		pc_command_processing(&ds1302);
+		
 		//1. read time
 		read_time_ds1302(&ds1302);
 		//2. read date
@@ -49,17 +48,21 @@ void ds1302_main(){
 		//4. delay_ms(1000);
 		_delay_ms(1000);
 	}	
+	
+	
 }
-void set_rtc(t_ds1302* ds1302, char* buff){
-	//setrtc260629095600
-	pc_command_processing();
-	ds1302->year = atoi(result_parsing[0]); 
-	ds1302->month =  atoi(result_parsing[1]);
-	ds1302->date =  atoi(result_parsing[2]);
-	ds1302->day_of_week = 0;
-	ds1302->hours =  atoi(result_parsing[3]);
-	ds1302->minutes =  atoi(result_parsing[4]);
-	ds1302->seconds =  atoi(result_parsing[5]);
+void set_rtc_from_uart(char* str, t_ds1302* ds1302){
+	char temp[3];
+	temp[2] ='\0';
+	
+	ds1302->year = atoi(strncpy(temp, str + 6, 2));
+	ds1302->month = atoi(strncpy(temp, str + 8, 2));
+	ds1302->date = atoi(strncpy(temp, str + 10, 2));
+	ds1302->hours = atoi(strncpy(temp, str + 12, 2));
+	ds1302->minutes = atoi(strncpy(temp, str + 14, 2));
+	ds1302->seconds = atoi(strncpy(temp, str + 16, 2));
+	
+	init_ds1302(&ds1302);
 }
 
 
