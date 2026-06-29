@@ -16,7 +16,7 @@ extern uint8_t keypad_scan();
 extern void init_keypad();
 extern void init_uart0();
 extern void UART0_transmit(uint8_t data);
-extern void calculator();
+extern void calculator(char key_value);
 extern void print_calculator(int key);
 void init_timer0();
 volatile uint32_t keypad_count = 0;
@@ -51,8 +51,10 @@ int main(void)
 	while (1) {
 		if(!queue_empty()){
 			key_value = read_queue();
-			print_calculator(key_value);
+			//printf("%d", key_value);
 			calculator(key_value);
+			print_calculator(key_value);
+			
 			
 		}
 	}

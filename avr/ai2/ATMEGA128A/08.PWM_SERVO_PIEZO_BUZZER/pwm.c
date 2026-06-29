@@ -39,7 +39,7 @@ void init_timer1_pwm(){
 	// 0.000005sec x 65535 ==> 0.0327675sec (32.7675ms) 32.7675ms 마다 timer INT
 	// 20ms 길이(Duty)를 갖는 것을 만든다고 한다면
 	// 0.000005sec x 40000개 ==> 0.02sec ( 20ms )
-	// TCNT3 : 0~255(0x00ff) 까지 count한 후 0으로 다시 돌아 간다.
+	// TCNT1 : 0~39999 까지 count한 후 0으로 다시 돌아 간다.
 	TCCR1B &= ~(1 << CS12 | 1 << CS11 | 1 << CS10);   // all reset (기존의 값을 무시)
 	TCCR1B |= 1 << CS11;   // 분주비 8
 
