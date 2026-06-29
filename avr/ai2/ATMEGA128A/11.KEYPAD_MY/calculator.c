@@ -5,8 +5,14 @@
  *  Author: kccistc
  */ 
 #include <stdio.h>
+#include "queue.h"
 int result = 0;
 int current_num = 0;
+int num1 =0;
+int num2 =0;
+int number_stack[10];
+char op_stack[10];
+
 
 void calculator(int key);
 void print_calculator(int key);
@@ -27,6 +33,9 @@ void calculator(int key){
 		current_num = (current_num * 10) + input_digit;
 	}
 	else{
+		insert_queue(current_num);
+		
+		num1 = current_num;
 		switch(key){
 			
 			case '+':
